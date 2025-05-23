@@ -1,6 +1,6 @@
 {
    "name": "@stellaxyz/litlayer-sdk",
-   "version": "1.0.0",
+   "version": "1.0.1",
    "description": "Litlayer TypeScript SDK (Stella Trade)",
    "main": "./build/cjs/index.js",
    "types": "./build/types/index.d.ts",
