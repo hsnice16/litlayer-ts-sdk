@@ -5,8 +5,8 @@ export const CreateOrderSchema = z.object({
    direction: z.enum(OrderDirection),
    expiry_time: z.number()
       .positive({ message: "expiryTime must be a positive number" })
-      .transform((val) => val < 10000000000 ? val * 1000 : val)
-      .refine((val) => val > Date.now(), { message: "expiryTime must be greater than current timestamp" }),
+      .transform((val: number) => val < 10000000000 ? val * 1000 : val)
+      .refine((val: number) => val > Date.now(), { message: "expiryTime must be greater than current timestamp" }),
    leverage: z.number().positive({ message: "leverage must be a positive number" }),
    price: z.string().min(0, { message: "price cannot be empty" }),
    quantity: z.string().min(0, { message: "quantity cannot be empty" }),
@@ -22,7 +22,7 @@ export const CancelOrderSchema = z
       client_order_id: z.string().optional(),
    })
    .refine(
-      (data) => data.order_no || data.client_order_id,
+      (data: { order_no?: string; client_order_id?: string; }) => data.order_no || data.client_order_id,
       "Either order_no or client_order_id must be provided"
    );
 
@@ -32,7 +32,7 @@ export const CancelOrdersSchema = z
       client_order_ids: z.array(z.string().min(1)).optional(),
    })
    .refine(
-      (data) =>
+      (data: { order_nos?: string[]; client_order_ids?: string[]; }) =>
          (data.order_nos && data.order_nos.length > 0) ||
          (data.client_order_ids && data.client_order_ids.length > 0),
       "Either order_nos or client_order_ids must be provided and non-empty"

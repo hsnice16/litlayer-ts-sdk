@@ -23,4 +23,7 @@ jobs:
       run: yarn install --frozen-lockfile
 
     - name: Run tests
-      run: yarn test 
+      run: yarn test
+      env: # Add these lines
+        TEST_PK: ${{ secrets.TEST_PK }} # Add this line
+        HTTP_ENDPOINT: ${{ secrets.HTTP_ENDPOINT }} # Add this line
