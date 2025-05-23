@@ -17,9 +17,9 @@ The LitLayer TypeScript SDK provides seamless access to the LitLayer engine - th
 ## Installation
 
 ```shell
-npm install @litlayer/ts-sdk
+npm install @stellaxyz/litlayer-sdk
 # or
-yarn add @litlayer/ts-sdk
+yarn add @stellaxyz/litlayer-sdk
 ```
 
 ## Prerequisites
