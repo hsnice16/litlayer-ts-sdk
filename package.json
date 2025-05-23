@@ -1,0 +1,62 @@
+{
+   "name": "@stellaxyz/litlayer-sdk",
+   "version": "1.0.0",
+   "description": "Litlayer TypeScript SDK (Stella Trade)",
+   "main": "./build/cjs/index.js",
+   "types": "./build/types/index.d.ts",
+   "module": "./build/esm/index.js",
+   "source": "./src/index.ts",
+   "files": [
+      "build",
+      "src"
+   ],
+   "exports": {
+      ".": {
+         "types": "./build/types/index.d.ts",
+         "require": "./build/cjs/index.js",
+         "import": "./build/esm/index.js",
+         "source": "./src/index.ts",
+         "default": "./build/esm/index.js"
+      }
+   },
+   "keywords": [
+      "stella",
+      "stella-trade",
+      "stella-sdk",
+      "stella-typescript-sdk",
+      "stella-ts-sdk",
+      "stella-typescript-sdk",
+      "stella-ts-sdk",
+      "stella-typescript-sdk",
+      "stella-ts-sdk"
+   ],
+   "scripts": {
+      "build": "rimraf build && tsc",
+      "clean": "rimraf build",
+      "docs": "typedoc",
+      "test": "vitest run"
+   },
+   "author": "Litlayer Team <dev@litlayer.com>",
+   "license": "ISC",
+   "devDependencies": {
+      "@types/node": "^22.15.21",
+      "@types/ws": "8.5.14",
+      "dotenv": "16.4.7",
+      "rimraf": "^5.0.0",
+      "ts-node": "10.9.2",
+      "typedoc": "0.25.13",
+      "typescript": "^5.8.3",
+      "vitest": "3.0.9"
+   },
+   "peerDependencies": {
+      "axios": "^1.9.0",
+      "ws": "8.x",
+      "zod": "^3.25.13"
+   },
+   "dependencies": {
+      "isomorphic-ws": "^5.0.0",
+      "viem": "2.x"
+   },
+   "type": "module",
+   "repository": "https://github.com/AlphaFinanceLab/litlayer-ts-sdk"
+}
