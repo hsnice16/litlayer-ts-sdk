@@ -30,15 +30,13 @@ describe('UserWsClient E2E', () => {
       };
 
       // Connect to the real WebSocket server
-      // @ts-ignore
       client.connect();
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for connection
    }, 10000);
 
    afterAll(async () => {
       if (client) {
-         // @ts-ignore
-         client.close();
+         client.disconnect();
       }
    });
 
