@@ -1,40 +1,42 @@
-import { checkAgent, exchangeAgent } from "./apis/agent"
 import { keccak256, toBytes, Account as ViemAccount } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { WalletClient } from "viem";
+import BigNumber from "bignumber.js";
 
 import {
-   AGENT_EXPIRE_DURATION,
-   TYPED_SIG_DOMAIN_NAME,
-   TYPED_SIG_DOMAIN_VERSION,
-   TYPES_AGENT,
-} from "./constants"
+  AGENT_EXPIRE_DURATION,
+  TYPED_SIG_DOMAIN_NAME,
+  TYPED_SIG_DOMAIN_VERSION,
+  TYPES_AGENT,
+} from "./constants";
 
 import {
-   CHAINS,
-   PLATFORMS,
-   ReadonlyHeaders,
-   AuthenticatedHeaders,
-   GenericObject,
-   ENVIRONMENT,
-} from "./types"
-import { LitlayerTypedDataDomain } from "./types"
-import { InvalidParameterError } from "./error"
+  CHAINS,
+  PLATFORMS,
+  ReadonlyHeaders,
+  AuthenticatedHeaders,
+  GenericObject,
+  ENVIRONMENT,
+} from "./types";
+
+import { checkAgent, exchangeAgent } from "./apis/agent";
+import { LitlayerTypedDataDomain } from "./types";
+import { InvalidParameterError } from "./error";
 
 export {
-   removeLeadingSlashes,
-   verifyRequiredParameter,
-   validateRequiredParameter,
-   verifyStringRequiredParameter,
-   validateStringRequiredParameter,
-   getHttpErrorMsg,
-   getAPIErrorMsg,
-   getReadonlyHeaders,
-   getHeaders,
-   signTypedData,
-   getExpiryTime,
-   getSignTypedDomain,
-   generateAgentAccount,
+  removeLeadingSlashes,
+  verifyRequiredParameter,
+  validateRequiredParameter,
+  verifyStringRequiredParameter,
+  validateStringRequiredParameter,
+  getHttpErrorMsg,
+  getAPIErrorMsg,
+  getReadonlyHeaders,
+  getHeaders,
+  signTypedData,
+  getExpiryTime,
+  getSignTypedDomain,
+  generateAgentAccount,
 };
 
 /**
@@ -44,7 +46,7 @@ export {
  * @returns {string} Slashed String
  */
 function removeLeadingSlashes(value: string): string {
-   return value.replace(/\/+$/, "");
+  return value.replace(/\/+$/, "");
 }
 
 /**
@@ -54,7 +56,7 @@ function removeLeadingSlashes(value: string): string {
  * @returns {boolean} True/False
  */
 function verifyRequiredParameter(parameter: any): boolean {
-   return parameter !== null && parameter !== undefined;
+  return parameter !== null && parameter !== undefined;
 }
 
 /**
@@ -64,7 +66,7 @@ function verifyRequiredParameter(parameter: any): boolean {
  * @returns {boolean} True/False
  */
 function verifyStringRequiredParameter(parameter?: string): boolean {
-   return verifyRequiredParameter(parameter) && parameter !== "";
+  return verifyRequiredParameter(parameter) && parameter !== "";
 }
 
 /**
@@ -75,12 +77,12 @@ function verifyStringRequiredParameter(parameter?: string): boolean {
  * @throws {InvalidParameterError} If parameter is null or undefined
  */
 function validateRequiredParameter(value: any, fieldName: string): void {
-   if (!verifyRequiredParameter(value)) {
-      throw new InvalidParameterError(
-         fieldName,
-         `Required parameter ${fieldName} was null or undefined.`
-      );
-   }
+  if (!verifyRequiredParameter(value)) {
+    throw new InvalidParameterError(
+      fieldName,
+      `Required parameter ${fieldName} was null or undefined.`
+    );
+  }
 }
 
 /**
@@ -90,13 +92,16 @@ function validateRequiredParameter(value: any, fieldName: string): void {
  * @param {string} fieldName Parameter field name for error message
  * @throws {InvalidParameterError} If parameter is null, undefined, or empty string
  */
-function validateStringRequiredParameter(value: string | undefined, fieldName: string): void {
-   if (!verifyStringRequiredParameter(value)) {
-      throw new InvalidParameterError(
-         fieldName,
-         `Required parameter ${fieldName} was null, undefined, or empty.`
-      );
-   }
+function validateStringRequiredParameter(
+  value: string | undefined,
+  fieldName: string
+): void {
+  if (!verifyStringRequiredParameter(value)) {
+    throw new InvalidParameterError(
+      fieldName,
+      `Required parameter ${fieldName} was null, undefined, or empty.`
+    );
+  }
 }
 
 /**
@@ -106,7 +111,7 @@ function validateStringRequiredParameter(value: string | undefined, fieldName: s
  * @returns {string} Message
  */
 function getHttpErrorMsg(status: number): string {
-   return `Fetch Error. Status: ${status}`;
+  return `Fetch Error. Status: ${status}`;
 }
 
 /**
@@ -117,7 +122,7 @@ function getHttpErrorMsg(status: number): string {
  * @returns {string} Message
  */
 function getAPIErrorMsg(code: number, msg: string): string {
-   return `Server Exception. Code ${code}: ${msg}`;
+  return `Server Exception. Code ${code}: ${msg}`;
 }
 
 /**
@@ -128,13 +133,13 @@ function getAPIErrorMsg(code: number, msg: string): string {
  * @returns {ReadonlyHeaders} Object
  */
 function getReadonlyHeaders(
-   platform: PLATFORMS,
-   chainId: CHAINS
+  platform: PLATFORMS,
+  chainId: CHAINS
 ): ReadonlyHeaders {
-   return {
-      "X-Platform": String(platform),
-      "X-Chain-EVM-Id": String(chainId),
-   } as any;
+  return {
+    "X-Platform": String(platform),
+    "X-Chain-EVM-Id": String(chainId),
+  } as any;
 }
 
 /**
@@ -150,62 +155,76 @@ function getReadonlyHeaders(
  * @returns {AuthenticatedHeaders} Promise
  */
 async function getHeaders(
-   baseUrl: string,
-   platform: PLATFORMS,
-   chainId: CHAINS,
-   agent: WalletClient,
-   userWalletClient: WalletClient,
-   payload: GenericObject<any>,
-   environment: ENVIRONMENT
+  baseUrl: string,
+  platform: PLATFORMS,
+  chainId: CHAINS,
+  agent: WalletClient,
+  userWalletClient: WalletClient,
+  payload: GenericObject<any>,
+  environment: ENVIRONMENT
 ): Promise<AuthenticatedHeaders> {
-   const payloadString = JSON.stringify(payload);
+  const payloadString = JSON.stringify(payload);
 
-   if (!userWalletClient.account) {
-      throw new Error("userWalletClient does not have an account for InternalHttpClient instantiation.");
-   }
-   if (!agent.account) {
-      throw new Error("Agent WalletClient does not have an account for InternalHttpClient instantiation.");
-   }
+  if (!userWalletClient.account) {
+    throw new Error(
+      "userWalletClient does not have an account for InternalHttpClient instantiation."
+    );
+  }
+  if (!agent.account) {
+    throw new Error(
+      "Agent WalletClient does not have an account for InternalHttpClient instantiation."
+    );
+  }
 
-   const isAgentAddressValid = await checkAgent(baseUrl, chainId, platform, agent.account.address);
+  const isAgentAddressValid = await checkAgent(
+    baseUrl,
+    chainId,
+    platform,
+    agent.account.address
+  );
 
-   if (!isAgentAddressValid) {
-      const expiryTime = getExpiryTime();
+  if (!isAgentAddressValid) {
+    const expiryTime = getExpiryTime();
 
-      if (!userWalletClient.account) {
-         throw new Error("userWalletClient does not have an account to sign with for agent exchange.");
-      }
-
-      const signatureForAgentExchange = await signTypedData(
-         platform,
-         chainId,
-         agent.account.address,
-         userWalletClient,
-         expiryTime,
-         environment
+    if (!userWalletClient.account) {
+      throw new Error(
+        "userWalletClient does not have an account to sign with for agent exchange."
       );
+    }
 
-      await exchangeAgent(
-         baseUrl,
-         platform,
-         chainId,
-         agent.account.address,
-         signatureForAgentExchange,
-         expiryTime,
-         userWalletClient.account.address
-      );
-   }
+    const signatureForAgentExchange = await signTypedData(
+      platform,
+      chainId,
+      agent.account.address,
+      userWalletClient,
+      expiryTime,
+      environment
+    );
 
-   const timestamp = Date.now();
-   const signature = await agent!.signMessage({ account: agent.account!, message: `${payloadString}${timestamp}` });
+    await exchangeAgent(
+      baseUrl,
+      platform,
+      chainId,
+      agent.account.address,
+      signatureForAgentExchange,
+      expiryTime,
+      userWalletClient.account.address
+    );
+  }
 
-   const stringifiedReadonlyHeaders = getReadonlyHeaders(platform, chainId);
+  const timestamp = Date.now();
+  const signature = await agent!.signMessage({
+    account: agent.account!,
+    message: `${payloadString}${timestamp}`,
+  });
 
-   return {
-      ...stringifiedReadonlyHeaders,
-      "X-Nonce": timestamp,
-      "X-Signature": signature,
-   } as const;
+  const stringifiedReadonlyHeaders = getReadonlyHeaders(platform, chainId);
+
+  return {
+    ...stringifiedReadonlyHeaders,
+    "X-Nonce": timestamp,
+    "X-Signature": signature,
+  } as const;
 }
 
 /**
@@ -220,40 +239,43 @@ async function getHeaders(
  * @returns {string} Signature Promise
  */
 async function signTypedData(
-   platform: PLATFORMS,
-   chainId: CHAINS,
-   agentAddress: string,
-   singerWalletClient: WalletClient,
-   expiryTime: number,
-   environment: ENVIRONMENT
+  platform: PLATFORMS,
+  chainId: CHAINS,
+  agentAddress: string,
+  singerWalletClient: WalletClient,
+  expiryTime: number,
+  environment: ENVIRONMENT
 ): Promise<string> {
-   const message = {
-      litLayer: environment,
-      agentAddress: agentAddress,
-      platform: platform,
-      expiryTime: expiryTime,
-   };
+  const message = {
+    litLayer: environment,
+    agentAddress: agentAddress,
+    platform: platform,
+    expiryTime: expiryTime,
+  };
 
-   const domainInfo = getSignTypedDomain(chainId);
-   const viemDomain = {
-      name: domainInfo.name === null ? undefined : domainInfo.name,
-      version: domainInfo.version === null ? undefined : domainInfo.version,
-      chainId: typeof domainInfo.chainId === 'string'
-         ? parseInt(domainInfo.chainId, 10)
-         : domainInfo.chainId === null ? undefined : domainInfo.chainId,
-   };
+  const domainInfo = getSignTypedDomain(chainId);
+  const viemDomain = {
+    name: domainInfo.name === null ? undefined : domainInfo.name,
+    version: domainInfo.version === null ? undefined : domainInfo.version,
+    chainId:
+      typeof domainInfo.chainId === "string"
+        ? parseInt(domainInfo.chainId, 10)
+        : domainInfo.chainId === null
+        ? undefined
+        : domainInfo.chainId,
+  };
 
-   if (!singerWalletClient.account) {
-      throw new Error("userWalletClient does not have an account to sign with.");
-   }
+  if (!singerWalletClient.account) {
+    throw new Error("userWalletClient does not have an account to sign with.");
+  }
 
-   return await singerWalletClient.signTypedData({
-      account: singerWalletClient.account,
-      domain: viemDomain,
-      types: TYPES_AGENT,
-      primaryType: "Agent",
-      message,
-   });
+  return await singerWalletClient.signTypedData({
+    account: singerWalletClient.account,
+    domain: viemDomain,
+    types: TYPES_AGENT,
+    primaryType: "Agent",
+    message,
+  });
 }
 
 /**
@@ -262,7 +284,7 @@ async function signTypedData(
  * @returns {number} Expiry Time
  */
 function getExpiryTime(): number {
-   return Math.floor(Date.now() / 1000) + AGENT_EXPIRE_DURATION;
+  return Math.floor(Date.now() / 1000) + AGENT_EXPIRE_DURATION;
 }
 
 /**
@@ -272,16 +294,16 @@ function getExpiryTime(): number {
  * @returns {LitlayerTypedDataDomain} Object
  */
 function getSignTypedDomain(chainId: CHAINS): LitlayerTypedDataDomain {
-   let processedChainId: number | string | null = chainId;
-   if (typeof chainId === 'string') {
-      const parsed = parseInt(chainId, 10);
-      processedChainId = isNaN(parsed) ? chainId : parsed;
-   }
-   return {
-      name: TYPED_SIG_DOMAIN_NAME,
-      version: TYPED_SIG_DOMAIN_VERSION,
-      chainId: processedChainId,
-   };
+  let processedChainId: number | string | null = chainId;
+  if (typeof chainId === "string") {
+    const parsed = parseInt(chainId, 10);
+    processedChainId = isNaN(parsed) ? chainId : parsed;
+  }
+  return {
+    name: TYPED_SIG_DOMAIN_NAME,
+    version: TYPED_SIG_DOMAIN_VERSION,
+    chainId: processedChainId,
+  };
 }
 
 /**
@@ -290,8 +312,35 @@ function getSignTypedDomain(chainId: CHAINS): LitlayerTypedDataDomain {
  * @returns {ViemAccount} Promise or direct ViemAccount
  */
 function generateAgentAccount(): ViemAccount {
-   const randomPrivateKey = generatePrivateKey();
-   const privateKey = keccak256(toBytes(randomPrivateKey));
-   return privateKeyToAccount(privateKey as `0x${string}`);
+  const randomPrivateKey = generatePrivateKey();
+  const privateKey = keccak256(toBytes(randomPrivateKey));
+  return privateKeyToAccount(privateKey as `0x${string}`);
 }
 
+/**
+ *
+ * @summary Get Slippage Adjusted Market Price
+ * @param {string} price Market Price
+ * @param {string} slippage Slippage
+ * @param {boolean} isLong Is Long Position
+ * @returns {string} Slippage Adjusted Market Price
+ */
+export function getSlippageAdjustedPrice(
+  price: string,
+  slippage: string,
+  isLong: boolean
+): string {
+  let slippageToleranceValue = new BigNumber(1);
+
+  if (isLong) {
+    slippageToleranceValue = new BigNumber(1).plus(
+      new BigNumber(slippage).dividedBy(100)
+    );
+  } else {
+    slippageToleranceValue = new BigNumber(1).minus(
+      new BigNumber(slippage).dividedBy(100)
+    );
+  }
+
+  return new BigNumber(price).multipliedBy(slippageToleranceValue).toString();
+}

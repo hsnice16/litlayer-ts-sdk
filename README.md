@@ -34,61 +34,68 @@ This SDK can work with different HTTP clients. If you plan to use the `axios-htt
 ## Usage
 
 ### Testnet Configuration
-| Name         | Website                           | chainId            | platform         | environment        | baseUrl                          |
-|--------------|-----------------------------------|--------------------|------------------|--------------------|----------------------------------|
+
+| Name         | Website                            | chainId             | platform         | environment         | baseUrl                         |
+| ------------ | ---------------------------------- | ------------------- | ---------------- | ------------------- | ------------------------------- |
 | Stella Trade | https://testnet.trade.stellaxyz.io | CHAINS.BERA_BEPOLIA | PLATFORMS.STELLA | ENVIRONMENT.TESTNET | https://testnet.v2.stellaxyz.io |
 
 ### Mainnet Configuration
-| Name         | Website                    | chainId             | platform         | environment        | baseUrl                   |
-|--------------|----------------------------|---------------------|------------------|--------------------|---------------------------|
-| Stella Trade | https://trade.stellaxyz.io | CHAINS.BERA_MAINNET | PLATFORMS.STELLA | ENVIRONMENT.MAINNET | https://v2.stellaxyz.io   |
 
+| Name         | Website                    | chainId             | platform         | environment         | baseUrl                 |
+| ------------ | -------------------------- | ------------------- | ---------------- | ------------------- | ----------------------- |
+| Stella Trade | https://trade.stellaxyz.io | CHAINS.BERA_MAINNET | PLATFORMS.STELLA | ENVIRONMENT.MAINNET | https://v2.stellaxyz.io |
 
 ### LitlayerHttpClient
 
 Use `LitlayerHttpClient` to make API calls for managing user accounts, placing orders, fetching history, and more.
 
 ```ts
-import { CHAINS, PLATFORMS, ENVIRONMENT, LitlayerHttpClient } from "@stellaxyz/litlayer-sdk";
+import {
+  CHAINS,
+  PLATFORMS,
+  ENVIRONMENT,
+  LitlayerHttpClient,
+} from "@stellaxyz/litlayer-sdk";
 import { privateKeyToAccount } from "viem/accounts";
 
 // Replace with your actual private key
 const signer = privateKeyToAccount("0xYOUR_PRIVATE_KEY");
 
 async function main() {
-   // Testnet Environment
-   const litlayerHttpClient = await LitlayerHttpClient.create(
-      CHAINS.BERA_BEPOLIA,
-      PLATFORMS.STELLA,
-      ENVIRONMENT.TESTNET,
-      signer,
-      "https://testnet.v2.stellaxyz.io",
-   );
+  // Testnet Environment
+  const litlayerHttpClient = await LitlayerHttpClient.create(
+    CHAINS.BERA_BEPOLIA,
+    PLATFORMS.STELLA,
+    ENVIRONMENT.TESTNET,
+    signer,
+    "https://testnet.v2.stellaxyz.io"
+  );
 
-   // For Mainnet, use the following line instead:
-   // const litlayerHttpClient = await LitlayerHttpClient.create(
-   //    CHAINS.BERA_MAINNET,
-   //    PLATFORMS.STELLA,
-   //    ENVIRONMENT.MAINNET, // or ENVIRONMENT.MAINNET
-   //    signer,
-   //    "https://v2.stellaxyz.io",
-   // );
+  // For Mainnet, use the following line instead:
+  // const litlayerHttpClient = await LitlayerHttpClient.create(
+  //    CHAINS.BERA_MAINNET,
+  //    PLATFORMS.STELLA,
+  //    ENVIRONMENT.MAINNET, // or ENVIRONMENT.MAINNET
+  //    signer,
+  //    "https://v2.stellaxyz.io",
+  // );
 
-   // Example: Query sub-accounts
-   const subAccounts = await litlayerHttpClient.user.querySubAccounts();
-   console.log("Sub Accounts:", subAccounts);
+  // Example: Query sub-accounts
+  const subAccounts = await litlayerHttpClient.user.querySubAccounts();
+  console.log("Sub Accounts:", subAccounts);
 
-   // Example: Fetching oracle price
-   const oraclePrice = await litlayerHttpClient.oracle.getPrice("ETH");
-   console.log("Oracle Price for ETH:", oraclePrice);
+  // Example: Fetching oracle price
+  const oraclePrice = await litlayerHttpClient.oracle.getPrice("ETH");
+  console.log("Oracle Price for ETH:", oraclePrice);
 
-   // Example: Check API health
-   const isHealthy = await litlayerHttpClient.checkHealth();
-   console.log("API Health:", isHealthy ? "Healthy" : "Unhealthy");
+  // Example: Check API health
+  const isHealthy = await litlayerHttpClient.checkHealth();
+  console.log("API Health:", isHealthy ? "Healthy" : "Unhealthy");
 }
 
 main().catch(console.error);
 ```
+
 For more details, see the [HTTP Client source](./src/litlayer-http-client.ts) and [full examples](#examples).
 
 ### LitlayerWsClient
@@ -96,9 +103,13 @@ For more details, see the [HTTP Client source](./src/litlayer-http-client.ts) an
 Use `LitlayerWsClient` to connect to WebSocket streams for real-time data like order books, trades, and market information.
 
 **User (Public) WebSocket:**
+
 ```ts
-import { UserWsClient } from '../src/ws/user-ws-client';
-import { USER_WS_CLIENT_ADDRESS_CHANNELS, USER_WS_CLIENT_SYMBOL_CHANNELS } from '../src/ws/types';
+import { UserWsClient } from "../src/ws/user-ws-client";
+import {
+  USER_WS_CLIENT_ADDRESS_CHANNELS,
+  USER_WS_CLIENT_SYMBOL_CHANNELS,
+} from "../src/ws/types";
 
 // Create WebSocket client instance
 const userWsClient = new UserWsClient("wss://testnet.v2.stellaxyz.io/v1/ws");
@@ -107,59 +118,55 @@ const userWsClient = new UserWsClient("wss://testnet.v2.stellaxyz.io/v1/ws");
 userWsClient.connect();
 
 // Example: Subscribe to orderbook updates for ETH
-userWsClient.subscribeSymbol(
-   USER_WS_CLIENT_SYMBOL_CHANNELS.ORDER_BOOK,
-   'ETH'
-);
+userWsClient.subscribeSymbol(USER_WS_CLIENT_SYMBOL_CHANNELS.ORDER_BOOK, "ETH");
 // Handle orderbook updates
 userWsClient.addHandler(USER_WS_CLIENT_SYMBOL_CHANNELS.ORDER_BOOK, (data) => {
-   console.log('Orderbook update:', data);
-   // Unsubscribe from the orderbook channel on first message
-   userWsClient.unsubscribeSymbol(USER_WS_CLIENT_SYMBOL_CHANNELS.ORDER_BOOK, 'ETH');
+  console.log("Orderbook update:", data);
+  // Unsubscribe from the orderbook channel on first message
+  userWsClient.unsubscribeSymbol(
+    USER_WS_CLIENT_SYMBOL_CHANNELS.ORDER_BOOK,
+    "ETH"
+  );
 });
 
 // Example: Subscribe to trade updates
-userWsClient.subscribeSymbol(
-   USER_WS_CLIENT_SYMBOL_CHANNELS.TRADE,
-   'ETH'
-);
+userWsClient.subscribeSymbol(USER_WS_CLIENT_SYMBOL_CHANNELS.TRADE, "ETH");
 userWsClient.addHandler(USER_WS_CLIENT_SYMBOL_CHANNELS.TRADE, (data) => {
-   console.log('Trade update:', data);
+  console.log("Trade update:", data);
 });
 
 // Example: Subscribe to balance updates
-userWsClient.subscribeAddress(
-   USER_WS_CLIENT_ADDRESS_CHANNELS.BALANCE
-);
+userWsClient.subscribeAddress(USER_WS_CLIENT_ADDRESS_CHANNELS.BALANCE);
 // You can also use the .on method as an alias for .addHandler
 userWsClient.on(USER_WS_CLIENT_ADDRESS_CHANNELS.BALANCE, (data) => {
-   console.log('Balance update:', data);
+  console.log("Balance update:", data);
 });
 
 // Example: Subscribe to position updates
 userWsClient.subscribeAddress(
-   USER_WS_CLIENT_ADDRESS_CHANNELS.POSITION,
-   '0x0000000000000000000000000000000000000000'
+  USER_WS_CLIENT_ADDRESS_CHANNELS.POSITION,
+  "0x0000000000000000000000000000000000000000"
 );
 userWsClient.on(USER_WS_CLIENT_ADDRESS_CHANNELS.POSITION, (data) => {
-   console.log('Position update:', data);
+  console.log("Position update:", data);
 });
 
 // You can also set the user account address and subscribe to position updates
-userWsClient.setUserAccountAddress('0x0000000000000000000000000000000000000000');
-userWsClient.subscribeAddress(
-   USER_WS_CLIENT_ADDRESS_CHANNELS.POSITION,
+userWsClient.setUserAccountAddress(
+  "0x0000000000000000000000000000000000000000"
 );
+userWsClient.subscribeAddress(USER_WS_CLIENT_ADDRESS_CHANNELS.POSITION);
 userWsClient.on(USER_WS_CLIENT_ADDRESS_CHANNELS.POSITION, (data) => {
-   console.log('Position update:', data);
+  console.log("Position update:", data);
 });
-
 ```
-For more details, see the [WebSocket Client source](./src/litlayer-ws-client.ts) 
+
+For more details, see the [WebSocket Client source](./src/litlayer-ws-client.ts)
 
 ## Error Handling
 
 The SDK may throw specific types of errors:
+
 - `RequiredError`: When a required parameter is missing.
 - `LitlayerHttpError`: For issues related to HTTP requests (e.g., network errors, non-2xx status codes). This error may include a `status` property.
 - `LitlayerApiError`: When the API returns a non-successful response (e.g., `success: false`). This error may include `code` and `msg` properties from the API.
@@ -167,6 +174,7 @@ The SDK may throw specific types of errors:
 It's recommended to wrap SDK calls in `try...catch` blocks to handle these potential errors gracefully.
 
 Example:
+
 ```typescript
 import { LitlayerHttpError, LitlayerApiError } from "@stellaxyz/litlayer-sdk";
 
@@ -182,10 +190,11 @@ try {
   }
 }
 ```
-*(Note: `LitlayerHttpError` and `LitlayerApiError` are suggested improvements. Ensure they are implemented and exported from the SDK.)*
 
+_(Note: `LitlayerHttpError` and `LitlayerApiError` are suggested improvements. Ensure they are implemented and exported from the SDK.)_
 
 #### Order Management
+
 ```ts
 import { OrderDirection, OrderType } from "@stellaxyz/litlayer-sdk";
 
@@ -196,7 +205,7 @@ const limitOrderResponse = await litlayerHttpClient.order.createLimit(
   10, // leverage
   "2850", // price
   "0.5", // quantity
-  "ETH", // symbol
+  "ETH" // symbol
 );
 
 // Place a market order
@@ -207,7 +216,7 @@ const marketOrderResponse = await litlayerHttpClient.order.createMarket(
   "2850", // price
   "1.0", // quantity
   "0.1", // slippage
-  "ETH",
+  "ETH"
 );
 
 // Query open orders
@@ -223,6 +232,7 @@ await litlayerHttpClient.order.cancel("order-123", undefined);
 ```
 
 #### Position Management
+
 ```ts
 // Query open positions
 const openPositions = await litlayerHttpClient.position.queryOpenPositions();
@@ -232,7 +242,8 @@ if (openPositions.data.length > 0) {
   const position = openPositions.data[0];
   await litlayerHttpClient.position.close(
     position.quantity, // close entire position
-    position.position_no
+    position.position_no,
+    "2300.0" // slippage adjusted market price
   );
 }
 
@@ -240,11 +251,12 @@ if (openPositions.data.length > 0) {
 await litlayerHttpClient.order.closeTPSL(
   "position-123",
   "2800", // Stop Loss price
-  "3000"  // Take Profit price
+  "3000" // Take Profit price
 );
 ```
 
 #### User Operations
+
 ```ts
 // Query user balances
 const balances = await litlayerHttpClient.user.queryBalances();
@@ -256,11 +268,11 @@ const performance = await litlayerHttpClient.user.queryPerformances();
 await litlayerHttpClient.user.transferFund(
   "1000", // amount
   2, // destination sub-account ID
-  1  // source sub-account ID
+  1 // source sub-account ID
 );
 ```
 
-## Market Making 
+## Market Making
 
 If you're interested in performing market making and get access to our extra websocket functionalities, contact aproov [a t] stellaxyz.io
 
