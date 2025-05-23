@@ -24,6 +24,6 @@ jobs:
 
     - name: Run tests
       run: yarn test
-      env: # Add these lines
-        TEST_PK: ${{ secrets.TEST_PK }} # Add this line
-        HTTP_ENDPOINT: ${{ secrets.HTTP_ENDPOINT }} # Add this line
+      env:
+        PRIV_KEY: ${{ secrets.TEST_PK }}
+        HTTP_URL: ${{ vars.HTTP_URL }}
