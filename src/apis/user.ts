@@ -1,6 +1,6 @@
-import {
-   validateStringRequiredParameter,
-} from "../utils"
+import { validateStringRequiredParameter } from '../utils';
+import { IHttpClient } from '../clients/IHttpClient';
+
 import {
    CreateAccountSchema,
    DeleteAccountSchema,
@@ -9,7 +9,8 @@ import {
    UpdateAccountSchema,
    UpdateProfileSchema,
    SubmitWithdrawSchema,
-} from "./schemas/user"
+} from './schemas/user';
+
 import {
    UserCreateAccount,
    UserQueryBalancesResponse,
@@ -17,16 +18,13 @@ import {
    UserQueryProfile,
    UserQuerySubAccountsResponse,
    GenericObject,
-} from "../types"
-import { IHttpClient } from "../clients/IHttpClient";
+} from '../types';
 
 export class User {
    private client: IHttpClient;
    private mainAccountAddress: string;
 
-   constructor(
-      internalHttpClient: IHttpClient
-   ) {
+   constructor(internalHttpClient: IHttpClient) {
       this.client = internalHttpClient;
       this.mainAccountAddress = internalHttpClient.Account.address!;
    }
@@ -38,11 +36,9 @@ export class User {
     * @throws {RequiredError} RequiredError
     * @returns {UserQuerySubAccountsResponse[]} Promise
     */
-   async querySubAccounts(
-      address?: string
-   ): Promise<UserQuerySubAccountsResponse[]> {
+   async querySubAccounts(address?: string): Promise<UserQuerySubAccountsResponse[]> {
       const userAddress = address ? address : this.mainAccountAddress;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
       const urlPath = `v1/user/${userAddress}/account`;
       return this.client.get<UserQuerySubAccountsResponse[]>(urlPath);
    }
@@ -56,7 +52,7 @@ export class User {
     */
    async queryBalances(address?: string): Promise<UserQueryBalancesResponse[]> {
       const userAddress = address ? address : this.mainAccountAddress;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
       const urlPath = `v1/user/${userAddress}/balance`;
       return this.client.get<UserQueryBalancesResponse[]>(urlPath);
    }
@@ -68,11 +64,9 @@ export class User {
     * @throws {RequiredError} RequiredError
     * @returns {UserQueryPerformancesResponse[]} Promise
     */
-   async queryPerformances(
-      address?: string
-   ): Promise<UserQueryPerformancesResponse[]> {
+   async queryPerformances(address?: string): Promise<UserQueryPerformancesResponse[]> {
       const userAddress = address ? address : this.mainAccountAddress;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
       const urlPath = `v1/user/${userAddress}/performance`;
       return this.client.get<UserQueryPerformancesResponse[]>(urlPath);
    }
@@ -86,7 +80,7 @@ export class User {
     */
    async queryProfile(address?: string): Promise<UserQueryProfile> {
       const userAddress = address ? address : this.mainAccountAddress;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
       const urlPath = `v1/user/${userAddress}/profile`;
       return this.client.get<UserQueryProfile>(urlPath);
    }
@@ -98,17 +92,11 @@ export class User {
     * @throws {RequiredError} RequiredError
     * @returns {UserCreateAccount} Promise
     */
-   async createAccount(
-      name: string,
-   ): Promise<UserCreateAccount> {
+   async createAccount(name: string): Promise<UserCreateAccount> {
       const validatedPayload = CreateAccountSchema.parse({ name });
-      const urlPath = "v1/user/account/create";
+      const urlPath = 'v1/user/account/create';
       let extraHeaders: GenericObject<string> = {};
-      return this.client.post<UserCreateAccount>(
-         urlPath,
-         validatedPayload,
-         extraHeaders,
-      );
+      return this.client.post<UserCreateAccount>(urlPath, validatedPayload, extraHeaders);
    }
 
    /**
@@ -118,17 +106,11 @@ export class User {
     * @throws {RequiredError} RequiredError
     * @returns {string} Promise
     */
-   async deleteAccount(
-      subAccountId: number,
-   ): Promise<string> {
+   async deleteAccount(subAccountId: number): Promise<string> {
       const validatedPayload = DeleteAccountSchema.parse({ sub_account_id: subAccountId });
-      const urlPath = "v1/user/account/delete";
+      const urlPath = 'v1/user/account/delete';
       let extraHeaders: GenericObject<string> = {};
-      return this.client.delete<string>(
-         urlPath,
-         validatedPayload,
-         extraHeaders,
-      );
+      return this.client.delete<string>(urlPath, validatedPayload, extraHeaders);
    }
 
    /**
@@ -138,15 +120,10 @@ export class User {
     * @throws {RequiredError} RequiredError
     * @returns {string} Promise
     */
-   async switchAccount(
-      subAccountId: number,
-   ): Promise<string> {
+   async switchAccount(subAccountId: number): Promise<string> {
       const validatedPayload = SwitchAccountSchema.parse({ sub_account_id: subAccountId });
-      const urlPath = "v1/user/account/switch";
-      return this.client.post<string>(
-         urlPath,
-         validatedPayload,
-      );
+      const urlPath = 'v1/user/account/switch';
+      return this.client.post<string>(urlPath, validatedPayload);
    }
 
    /**
@@ -161,18 +138,15 @@ export class User {
    async transferFund(
       amount: string,
       subAccountId: number,
-      subAccountIdFrom: number
+      subAccountIdFrom: number,
    ): Promise<string> {
       const validatedPayload = TransferFundSchema.parse({
          amount: amount,
          sub_account_id: subAccountId,
          sub_account_id_from: subAccountIdFrom,
       });
-      const urlPath = "v1/user/account/transfer-fund";
-      return this.client.post<string>(
-         urlPath,
-         validatedPayload,
-      );
+      const urlPath = 'v1/user/account/transfer-fund';
+      return this.client.post<string>(urlPath, validatedPayload);
    }
 
    /**
@@ -184,21 +158,14 @@ export class User {
     * @throws {RequiredError} RequiredError
     * @returns {string} Promise
     */
-   async updateAccount(
-      avatar: string,
-      name: string,
-      subAccountId: number
-   ): Promise<string> {
+   async updateAccount(avatar: string, name: string, subAccountId: number): Promise<string> {
       const validatedPayload = UpdateAccountSchema.parse({
          acc_avatar: avatar,
          acc_name: name,
          sub_account_id: subAccountId,
       });
-      const urlPath = "v1/user/account/update";
-      return this.client.post<string>(
-         urlPath,
-         validatedPayload,
-      );
+      const urlPath = 'v1/user/account/update';
+      return this.client.post<string>(urlPath, validatedPayload);
    }
 
    /**
@@ -208,15 +175,10 @@ export class User {
     * @throws {RequiredError} RequiredError
     * @returns {string} Promise
     */
-   async updateProfile(
-      nickname: string,
-   ): Promise<string> {
+   async updateProfile(nickname: string): Promise<string> {
       const validatedPayload = UpdateProfileSchema.parse({ nickname });
-      const urlPath = "v1/user/profile/update";
-      return this.client.post<string>(
-         urlPath,
-         validatedPayload,
-      );
+      const urlPath = 'v1/user/profile/update';
+      return this.client.post<string>(urlPath, validatedPayload);
    }
 
    /**
@@ -226,14 +188,9 @@ export class User {
     * @throws {RequiredError} RequiredError
     * @returns {string} Promise
     */
-   async submitWithdraw(
-      withdrawAmount: number,
-   ): Promise<string> {
+   async submitWithdraw(withdrawAmount: number): Promise<string> {
       const validatedPayload = SubmitWithdrawSchema.parse({ withdraw_amount: withdrawAmount });
-      const urlPath = "v1/withdraw/submit";
-      return this.client.post<string>(
-         urlPath,
-         validatedPayload,
-      );
+      const urlPath = 'v1/withdraw/submit';
+      return this.client.post<string>(urlPath, validatedPayload);
    }
 }

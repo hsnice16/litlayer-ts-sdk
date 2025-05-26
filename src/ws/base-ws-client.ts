@@ -1,7 +1,6 @@
-import WebSocket from "isomorphic-ws";
-import { GenericObject } from "../types";
-import { pause } from "../ws-utils";
-import { removeLeadingSlashes } from "../utils";
+import WebSocket from 'isomorphic-ws';
+import { GenericObject } from '../types';
+import { pause } from '../ws-utils';
 
 export abstract class BaseWsClient<
    ChannelType extends string,
@@ -12,11 +11,14 @@ export abstract class BaseWsClient<
    protected _connection: WebSocket | null = null;
    protected _isConnected: boolean = false;
    protected _requestBuffer: GenericObject<string> = {};
-   protected _wsUrl: string = "";
+   protected _wsUrl: string = '';
    protected _onConnect?: () => void;
    protected _onDisconnect?: () => void;
 
-   protected _handlers: Record<ChannelType | string, HandlerCallbackType[]> = {} as Record<ChannelType | string, HandlerCallbackType[]>;
+   protected _handlers: Record<ChannelType | string, HandlerCallbackType[]> = {} as Record<
+      ChannelType | string,
+      HandlerCallbackType[]
+   >;
 
    constructor(wsUrl: string) {
       this._wsUrl = wsUrl;
@@ -76,7 +78,7 @@ export abstract class BaseWsClient<
       };
 
       this._connection.onerror = (event) => {
-         this.onError(event.error || new Error("WebSocket error"));
+         this.onError(event.error || new Error('WebSocket error'));
       };
    }
 
@@ -114,7 +116,7 @@ export abstract class BaseWsClient<
    removeHandler(channel: ChannelType | string, callbackToRemove: HandlerCallbackType): void {
       const callbacks = this._handlers[channel];
       if (callbacks) {
-         this._handlers[channel] = callbacks.filter(cb => cb !== callbackToRemove);
+         this._handlers[channel] = callbacks.filter((cb) => cb !== callbackToRemove);
       }
    }
 
@@ -130,7 +132,7 @@ export abstract class BaseWsClient<
    }
 
    protected onError(error: any): void {
-      console.error("WebSocket error:", error);
+      console.error('WebSocket error:', error);
    }
 
    disconnect(): void {
@@ -139,7 +141,7 @@ export abstract class BaseWsClient<
          this._connection.close();
          this._connection = null;
          this._isConnected = false;
-         this._wsUrl = ""; // Clear wsUrl to prevent auto-reconnect after explicit disconnect
+         this._wsUrl = ''; // Clear wsUrl to prevent auto-reconnect after explicit disconnect
          // console.log("WebSocket disconnected.");
       }
    }
@@ -153,4 +155,4 @@ export abstract class BaseWsClient<
    on(channel: ChannelType | string, callback: HandlerCallbackType): this {
       return this.addHandler(channel, callback);
    }
-} 
+}

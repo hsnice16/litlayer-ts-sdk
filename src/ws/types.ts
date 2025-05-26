@@ -1,17 +1,11 @@
-import { WalletClient } from "viem";
-import {
-   CHAINS,
-   OrderDirection,
-   OrderType,
-   CreateOrder,
-   PLATFORMS,
-   ENVIRONMENT,
-} from "../types"
+import { WalletClient } from 'viem';
+import { CHAINS, OrderDirection, OrderType, CreateOrder, PLATFORMS, ENVIRONMENT } from '../types';
+
 import {
    USER_WS_RESPONSE_RESULT,
    MM_WS_LOGIN_RESPONSE_RESULT,
-   MM_WS_POST_RESPONSE_RESULT
-} from "./constants";
+   MM_WS_POST_RESPONSE_RESULT,
+} from './constants';
 
 /**
  * Config types
@@ -24,18 +18,18 @@ export interface WebSocketCreateOptions {
    environment: ENVIRONMENT;
 }
 
-/** 
- * Request Types 
+/**
+ * Request Types
  */
 
 export enum WEB_SOCKET_TYPES {
-   PUBLIC = "user",
-   MARKET_MARKET = "mm"
+   PUBLIC = 'user',
+   MARKET_MARKET = 'mm',
 }
 
 export enum PUBLIC_WS_REQUEST_TYPES {
-   SUBSCRIBE = "subscribe",
-   UNSUBSCRIBE = "unsubscribe",
+   SUBSCRIBE = 'subscribe',
+   UNSUBSCRIBE = 'unsubscribe',
 }
 
 export interface UserWsRequest {
@@ -56,13 +50,13 @@ export interface UserWsRequest {
 // R = result type string (e.g., "subscriptionResponse", "loginResponse")
 // D = data payload for the operation's response
 export type OperationResponse<R extends string, D = undefined> = {
-   id: string;      // Correlates to request id, should be present even if empty string
+   id: string; // Correlates to request id, should be present even if empty string
    result: R;
    success: boolean;
-   code: number;      // Error code, 0 for success
-   error?: string;   // Error message if success is false
-   data?: D;         // Data payload, structure depends on R and success status
-   ts: number;        // Timestamp of response generation from server
+   code: number; // Error code, 0 for success
+   error?: string; // Error message if success is false
+   data?: D; // Data payload, structure depends on R and success status
+   ts: number; // Timestamp of response generation from server
 };
 
 // Base for unsolicited messages pushed for an active subscription
@@ -110,12 +104,12 @@ export interface UserWsMarketResponseData {
 }
 
 export enum BALANCE_RESPONSE_DATA_CHANGE_TYPES {
-   DEPOSIT = "deposit",
-   WITHDRAW = "withdraw",
-   TRANSFER_FUND = "transfer_fund",
-   DELETE_ACCOUNT = "delete_account",
-   SETTLEMENT_CLEARING = "settlement_clearing",
-   FUNDING_FEE = "funding_fee",
+   DEPOSIT = 'deposit',
+   WITHDRAW = 'withdraw',
+   TRANSFER_FUND = 'transfer_fund',
+   DELETE_ACCOUNT = 'delete_account',
+   SETTLEMENT_CLEARING = 'settlement_clearing',
+   FUNDING_FEE = 'funding_fee',
 }
 
 export interface UserWsBalanceResponseData {
@@ -146,10 +140,10 @@ export type UserWsPositionResponseDataPosition = {
 };
 
 export enum POSITION_RESPONSE_DATA_CHANGE_TYPES {
-   NEW_POSITION = "new_position",
-   CLOSE_POSITION = "close_position",
-   SIZE_CHANGE = "size_change",
-   LIQUIDATION = "liquidation",
+   NEW_POSITION = 'new_position',
+   CLOSE_POSITION = 'close_position',
+   SIZE_CHANGE = 'size_change',
+   LIQUIDATION = 'liquidation',
 }
 
 export interface UserWsPositionResponseData {
@@ -175,11 +169,11 @@ export type UserWsOrderResponseDataOrder = {
 };
 
 export enum ORDER_RESPONSE_DATA_CHANGE_TYPES {
-   CANCELED_ORDER = "canceled_order",
-   EXPIRED_ORDER = "expired_order",
-   NEW_ORDER = "new_order",
-   DONE_ORDER = "done_order",
-   SIZE_CHANGE = "size_change",
+   CANCELED_ORDER = 'canceled_order',
+   EXPIRED_ORDER = 'expired_order',
+   NEW_ORDER = 'new_order',
+   DONE_ORDER = 'done_order',
+   SIZE_CHANGE = 'size_change',
 }
 
 export interface UserWsOrderResponseData {
@@ -189,7 +183,7 @@ export interface UserWsOrderResponseData {
 }
 
 // --- User Data Structures (These should already be defined above this point in the file) ---
-// UserWsOrderBookResponseDataList, UserWsOrderBookResponseData, UserWsTradeResponseData, 
+// UserWsOrderBookResponseDataList, UserWsOrderBookResponseData, UserWsTradeResponseData,
 // UserWsMarketResponseDataPrice, UserWsMarketResponseData, BALANCE_RESPONSE_DATA_CHANGE_TYPES,
 // UserWsBalanceResponseData, UserWsPositionResponseDataPosition, POSITION_RESPONSE_DATA_CHANGE_TYPES,
 // UserWsPositionResponseData, UserWsOrderResponseDataOrder, ORDER_RESPONSE_DATA_CHANGE_TYPES, UserWsOrderResponseData
@@ -231,28 +225,28 @@ export interface MmWsCancelOrdersRequestData {
 }
 
 // --- MM Request Payloads (Restore these) ---
-export interface PostPayloadRequest { /* ... as originally defined ... */
-   id?: string;
-   method: "post";
+export interface PostPayloadRequest {
+   /* ... as originally defined ... */ id?: string;
+   method: 'post';
    request: {
       channel:
-      | MM_WS_CLIENT_CHANNELS.LIMIT_ORDER
-      | MM_WS_CLIENT_CHANNELS.ANSWER_JIT
-      | MM_WS_CLIENT_CHANNELS.CANCEL_ORDER
-      | MM_WS_CLIENT_CHANNELS.CREATE_ORDERS
-      | MM_WS_CLIENT_CHANNELS.CANCEL_ORDERS;
+         | MM_WS_CLIENT_CHANNELS.LIMIT_ORDER
+         | MM_WS_CLIENT_CHANNELS.ANSWER_JIT
+         | MM_WS_CLIENT_CHANNELS.CANCEL_ORDER
+         | MM_WS_CLIENT_CHANNELS.CREATE_ORDERS
+         | MM_WS_CLIENT_CHANNELS.CANCEL_ORDERS;
       data:
-      | MmWsLimitOrderRequestData
-      | MmWsJitAnswerRequestData
-      | MmWsCancelOrderRequestData
-      | MmWsCreateOrdersRequestData
-      | MmWsCancelOrdersRequestData;
+         | MmWsLimitOrderRequestData
+         | MmWsJitAnswerRequestData
+         | MmWsCancelOrderRequestData
+         | MmWsCreateOrdersRequestData
+         | MmWsCancelOrdersRequestData;
    };
 }
 
-export interface LoginPayloadRequest { /* ... as originally defined ... */
-   id?: string;
-   method: "login";
+export interface LoginPayloadRequest {
+   /* ... as originally defined ... */ id?: string;
+   method: 'login';
    authentication: {
       platform: PLATFORMS;
       chain_id: CHAINS;
@@ -283,7 +277,8 @@ export interface MmWsTradeNotificationResponseData {
    chain: string;
 }
 
-export interface MmWsLoginResponse { // This is for the data field of a login OperationResponse
+export interface MmWsLoginResponse {
+   // This is for the data field of a login OperationResponse
    success: boolean;
    message: string;
 }
@@ -294,7 +289,8 @@ export type MmWsLimitOrderPostResponseDataData = {
    order_no: string;
    client_order_id: string;
 };
-export interface MmWsLimitOrderPostResponseData { // This is a specific shape for data in a Post OperationResponse
+export interface MmWsLimitOrderPostResponseData {
+   // This is a specific shape for data in a Post OperationResponse
    channel: MM_WS_CLIENT_CHANNELS.LIMIT_ORDER;
    data: MmWsLimitOrderPostResponseDataData;
 }
@@ -336,8 +332,10 @@ export type UserSubscriptionPush =
    | SubscriptionPush<USER_WS_CLIENT_ADDRESS_CHANNELS.POSITION, UserWsPositionResponseData>
    | SubscriptionPush<USER_WS_CLIENT_ADDRESS_CHANNELS.ORDER, UserWsOrderResponseData>;
 
-export type UserPureOperationResponse =
-   OperationResponse<typeof USER_WS_RESPONSE_RESULT, UserSubscriptionOperationData>;
+export type UserPureOperationResponse = OperationResponse<
+   typeof USER_WS_RESPONSE_RESULT,
+   UserSubscriptionOperationData
+>;
 
 export type UserWsResponse = UserPureOperationResponse | UserSubscriptionPush;
 
@@ -349,8 +347,10 @@ export type MmPostOperationResponseData =
    | MmWsCreateOrdersPostResponseData
    | MmWsCancelOrdersPostResponseData;
 
-export type MmSubscriptionPush =
-   | SubscriptionPush<MM_WS_CLIENT_CHANNELS.JIT_AUCTION, MmWsJitAuctionResponseData>;
+export type MmSubscriptionPush = SubscriptionPush<
+   MM_WS_CLIENT_CHANNELS.JIT_AUCTION,
+   MmWsJitAuctionResponseData
+>;
 
 export type MmPureOperationResponse =
    | OperationResponse<typeof MM_WS_LOGIN_RESPONSE_RESULT, MmWsLoginResponse>
@@ -363,29 +363,28 @@ export type MmWsResponse = MmPureOperationResponse | MmSubscriptionPush;
  */
 
 export enum USER_WS_CLIENT_SYMBOL_CHANNELS {
-   ORDER_BOOK = "orderbook",
-   TRADE = "trade",
-   MARKET = "market"
+   ORDER_BOOK = 'orderbook',
+   TRADE = 'trade',
+   MARKET = 'market',
 }
 
 export enum USER_WS_CLIENT_ADDRESS_CHANNELS {
-   BALANCE = "balance",
-   POSITION = "position",
-   ORDER = "order",
-   MATCHING = "matching"
+   BALANCE = 'balance',
+   POSITION = 'position',
+   ORDER = 'order',
+   MATCHING = 'matching',
 }
 /**
  * Market Maker WebSocket Types
  */
 
 export enum MM_WS_CLIENT_CHANNELS {
-   LIMIT_ORDER = "limitorder",
-   CANCEL_ORDER = "cancelorder",
-   ANSWER_JIT = "answerjit",
-   JIT_AUCTION = "jitauction",
-   CREATE_ORDERS = "createorders",
-   CANCEL_ORDERS = "cancelorders"
+   LIMIT_ORDER = 'limitorder',
+   CANCEL_ORDER = 'cancelorder',
+   ANSWER_JIT = 'answerjit',
+   JIT_AUCTION = 'jitauction',
+   CREATE_ORDERS = 'createorders',
+   CANCEL_ORDERS = 'cancelorders',
 }
 
 export type MmSpecificChannels = MM_WS_CLIENT_CHANNELS;
-

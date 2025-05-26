@@ -1,8 +1,5 @@
-
-import { IHttpClient } from "../IHttpClient"
-import {
-   validateStringRequiredParameter,
-} from "../utils"
+import { IHttpClient } from '../IHttpClient';
+import { validateStringRequiredParameter } from '../utils';
 
 import {
    HistoryQueryDepositsSortBy,
@@ -18,7 +15,7 @@ import {
    HistoryQueryWithdrawsResponseList,
    GenericObject,
    QueryResponse,
-} from "../types"
+} from '../types';
 
 export class History {
    private client: IHttpClient;
@@ -47,10 +44,10 @@ export class History {
       p?: number,
       ps?: number,
       sortBy?: HistoryQueryDepositsSortBy,
-      sortDir?: HistoryQuerySortDir
+      sortDir?: HistoryQuerySortDir,
    ): Promise<QueryResponse<HistoryQueryDepositsResponseList>> {
       const userAddress = address ? address : this.mainAccount;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {};
 
@@ -60,14 +57,14 @@ export class History {
       if (sortBy) queryParams.sortBy = sortBy;
 
       const extraHeaders: GenericObject<string> = {};
-      extraHeaders["X-Sub-Account"] = String(subAccount ?? 0);
+      extraHeaders['X-Sub-Account'] = String(subAccount ?? 0);
 
       const urlPath = `v1/history/deposit/${userAddress}`;
 
       return this.client.get<QueryResponse<HistoryQueryDepositsResponseList>>(
          urlPath,
          queryParams,
-         extraHeaders
+         extraHeaders,
       );
    }
 
@@ -97,15 +94,15 @@ export class History {
       ps?: number,
       fundType?: string,
       sortBy?: HistoryQueryFundsSortBy,
-      sortDir?: HistoryQuerySortDir
+      sortDir?: HistoryQuerySortDir,
    ): Promise<QueryResponse<HistoryQueryFundsResponseList>> {
       const userAddress = address ? address : this.mainAccount;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {};
       queryParams.p = p ?? 1;
       queryParams.ps = ps ?? 10;
-      queryParams.fund_type = fundType ?? "0,1,2,3";
+      queryParams.fund_type = fundType ?? '0,1,2,3';
       queryParams.sortDir = sortDir ?? HistoryQuerySortDir.ASC;
 
       if (sortBy) queryParams.sortBy = sortBy;
@@ -114,14 +111,14 @@ export class History {
       if (toDate) queryParams.toDate = toDate;
 
       const extraHeaders: GenericObject<string> = {};
-      extraHeaders["X-Sub-Account"] = String(subAccount ?? 0);
+      extraHeaders['X-Sub-Account'] = String(subAccount ?? 0);
 
       const urlPath = `v1/history/fund/${userAddress}`;
 
       return this.client.get<QueryResponse<HistoryQueryFundsResponseList>>(
          urlPath,
          queryParams,
-         extraHeaders
+         extraHeaders,
       );
    }
 
@@ -149,10 +146,10 @@ export class History {
       p?: number,
       ps?: number,
       sortBy?: HistoryQueryOrdersSortBy,
-      sortDir?: HistoryQuerySortDir
+      sortDir?: HistoryQuerySortDir,
    ): Promise<QueryResponse<HistoryQueryOrdersResponseList>> {
       const userAddress = address ? address : this.mainAccount;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {};
       queryParams.p = p ?? 1;
@@ -165,14 +162,14 @@ export class History {
       if (toDate) queryParams.toDate = toDate;
 
       const extraHeaders: GenericObject<string> = {};
-      extraHeaders["X-Sub-Account"] = String(subAccount ?? 0);
+      extraHeaders['X-Sub-Account'] = String(subAccount ?? 0);
 
       const urlPath = `v1/history/order/${userAddress}`;
 
       return this.client.get<QueryResponse<HistoryQueryOrdersResponseList>>(
          urlPath,
          queryParams,
-         extraHeaders
+         extraHeaders,
       );
    }
 
@@ -200,10 +197,10 @@ export class History {
       p?: number,
       ps?: number,
       sortBy?: HistoryQueryTradesSortBy,
-      sortDir?: HistoryQuerySortDir
+      sortDir?: HistoryQuerySortDir,
    ): Promise<QueryResponse<HistoryQueryTradesResponseList>> {
       const userAddress = address ? address : this.mainAccount;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {};
       queryParams.p = p ?? 1;
@@ -216,14 +213,14 @@ export class History {
       if (toDate) queryParams.toDate = toDate;
 
       const extraHeaders: GenericObject<string> = {};
-      extraHeaders["X-Sub-Account"] = String(subAccount ?? 0);
+      extraHeaders['X-Sub-Account'] = String(subAccount ?? 0);
 
       const urlPath = `v1/history/trade/${userAddress}`;
 
       return this.client.get<QueryResponse<HistoryQueryTradesResponseList>>(
          urlPath,
          queryParams,
-         extraHeaders
+         extraHeaders,
       );
    }
 
@@ -245,10 +242,10 @@ export class History {
       p?: number,
       ps?: number,
       sortBy?: HistoryQueryWithdrawsSortBy,
-      sortDir?: HistoryQuerySortDir
+      sortDir?: HistoryQuerySortDir,
    ): Promise<QueryResponse<HistoryQueryWithdrawsResponseList>> {
       const userAddress = address ? address : this.mainAccount;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {};
       queryParams.p = p ?? 1;
@@ -257,14 +254,14 @@ export class History {
       if (sortBy) queryParams.sortBy = sortBy;
 
       const extraHeaders: GenericObject<string> = {};
-      extraHeaders["X-Sub-Account"] = String(subAccount ?? 0);
+      extraHeaders['X-Sub-Account'] = String(subAccount ?? 0);
 
       const urlPath = `v1/history/withdraw/${userAddress}`;
 
       return this.client.get<QueryResponse<HistoryQueryWithdrawsResponseList>>(
          urlPath,
          queryParams,
-         extraHeaders
+         extraHeaders,
       );
    }
 }

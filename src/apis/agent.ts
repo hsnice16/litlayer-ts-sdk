@@ -1,5 +1,5 @@
-import { CheckAgentPayloadSchema, ExchangeAgentPayloadSchema } from "./schemas/agent"
-import { CHAINS, GenericAPIResponse, PLATFORMS } from "../types"
+import { CheckAgentPayloadSchema, ExchangeAgentPayloadSchema } from './schemas/agent';
+import { CHAINS, GenericAPIResponse, PLATFORMS } from '../types';
 
 /**
  * Helper function to send POST requests and get JSON response.
@@ -10,12 +10,12 @@ import { CHAINS, GenericAPIResponse, PLATFORMS } from "../types"
  */
 async function postRequest<T>(url: string, payload: any): Promise<T> {
    const res = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-         "Content-Type": "application/json",
+         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-   }).then(res => res.json());
+   }).then((res) => res.json());
    return res;
 }
 
@@ -28,7 +28,12 @@ async function postRequest<T>(url: string, payload: any): Promise<T> {
  * @param {string} address - The address of the agent to check.
  * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the agent exists.
  */
-export async function checkAgent(baseUrl: string, chainId: CHAINS, platform: PLATFORMS, address: string): Promise<boolean> {
+export async function checkAgent(
+   baseUrl: string,
+   chainId: CHAINS,
+   platform: PLATFORMS,
+   address: string,
+): Promise<boolean> {
    const payloadToValidate = {
       chain_id: chainId,
       platform: platform,
@@ -38,7 +43,7 @@ export async function checkAgent(baseUrl: string, chainId: CHAINS, platform: PLA
 
    const urlPath = `${baseUrl}/v1/check-agent`;
    const res = await postRequest<GenericAPIResponse<any>>(urlPath, validatedPayload);
-   return res.success
+   return res.success;
 }
 
 /**
@@ -54,7 +59,15 @@ export async function checkAgent(baseUrl: string, chainId: CHAINS, platform: PLA
  * @param {string} mainAccountAddress - The address of the signer.
  * @returns {Promise<boolean>} A promise that resolves to a boolean indicating if the exchange was successful.
  */
-export async function exchangeAgent(baseUrl: string, platform: PLATFORMS, chainId: CHAINS, agentAddress: string, signature: string, expiryTime: number, mainAccountAddress: string): Promise<boolean> {
+export async function exchangeAgent(
+   baseUrl: string,
+   platform: PLATFORMS,
+   chainId: CHAINS,
+   agentAddress: string,
+   signature: string,
+   expiryTime: number,
+   mainAccountAddress: string,
+): Promise<boolean> {
    const payloadToValidate = {
       chain_id: chainId,
       platform: platform,
@@ -67,5 +80,5 @@ export async function exchangeAgent(baseUrl: string, platform: PLATFORMS, chainI
 
    const urlPath = `${baseUrl}/v1/exchange`;
    const res = await postRequest<GenericAPIResponse<any>>(urlPath, validatedPayload);
-   return res.success
+   return res.success;
 }

@@ -1,7 +1,10 @@
-import {
-   getHeaders,
-   getReadonlyHeaders
-} from "../utils"
+import { createWalletClient, http, Account as ViemAccount, WalletClient } from 'viem';
+
+import { getHeaders, getReadonlyHeaders } from '../utils';
+import { LitlayerApiError, HttpError } from '../error';
+import { removeLeadingSlashes, getHttpErrorMsg } from '../utils';
+import { IHttpClient } from './IHttpClient';
+
 import {
    CHAINS,
    PLATFORMS,
@@ -11,11 +14,7 @@ import {
    AuthenticatedHeaders,
    ReadonlyHeaders,
    GenericAPIResponse,
-} from "../types"
-import { createWalletClient, http, Account as ViemAccount, WalletClient } from "viem";
-import { LitlayerApiError, HttpError } from "../error"
-import { removeLeadingSlashes, getHttpErrorMsg, getAPIErrorMsg } from "../utils"
-import { IHttpClient } from "./IHttpClient"
+} from '../types';
 
 export class FetchHttpClient implements IHttpClient {
    private baseUrl: string;
@@ -24,7 +23,6 @@ export class FetchHttpClient implements IHttpClient {
    private mainAccount: WalletClient;
    private agent: WalletClient;
    private environment: ENVIRONMENT;
-
 
    constructor(
       baseUrl: string,
@@ -37,13 +35,17 @@ export class FetchHttpClient implements IHttpClient {
       this.baseUrl = baseUrl;
       this.platform = platform;
       this.chainId = chainId;
-      this.mainAccount = createWalletClient({ account: mainAccount, transport: http("http://localhost") });
-      this.agent = createWalletClient({ account: agentAccount, transport: http("http://localhost") });
+      this.mainAccount = createWalletClient({
+         account: mainAccount,
+         transport: http('http://localhost'),
+      });
+      this.agent = createWalletClient({
+         account: agentAccount,
+         transport: http('http://localhost'),
+      });
       this.environment = environment;
    }
-   private async getAuthHeaders(
-      payload: GenericObject<any>,
-   ): Promise<AuthenticatedHeaders> {
+   private async getAuthHeaders(payload: GenericObject<any>): Promise<AuthenticatedHeaders> {
       return getHeaders(
          this.baseUrl,
          this.platform,
@@ -51,7 +53,7 @@ export class FetchHttpClient implements IHttpClient {
          this.agent,
          this.mainAccount,
          payload,
-         this.environment
+         this.environment,
       );
    }
 
@@ -86,7 +88,7 @@ export class FetchHttpClient implements IHttpClient {
    async get<T>(
       path: string,
       queryParams?: Record<string, string | number | boolean | undefined>,
-      requestSpecificHeaders?: GenericObject<string>
+      requestSpecificHeaders?: GenericObject<string>,
    ): Promise<T> {
       let fullPath = path;
       if (queryParams) {
@@ -103,8 +105,8 @@ export class FetchHttpClient implements IHttpClient {
 
       const readonlyHeaders = this.getReadonlyHeaders();
       const headers: Record<string, string> = {
-         "X-Platform": String(readonlyHeaders["X-Platform"]),
-         "X-Chain-EVM-Id": String(readonlyHeaders["X-Chain-EVM-Id"]),
+         'X-Platform': String(readonlyHeaders['X-Platform']),
+         'X-Chain-EVM-Id': String(readonlyHeaders['X-Chain-EVM-Id']),
          ...(requestSpecificHeaders || {}),
       };
 
@@ -121,14 +123,14 @@ export class FetchHttpClient implements IHttpClient {
    async post<T>(
       path: string,
       body: GenericObject<any>,
-      requestSpecificHeaders?: GenericObject<string>
+      requestSpecificHeaders?: GenericObject<string>,
    ): Promise<T> {
       const authHeaders = await this.getAuthHeaders(body);
       const headers: Record<string, string> = {
-         "X-Platform": String(authHeaders["X-Platform"]),
-         "X-Chain-EVM-Id": String(authHeaders["X-Chain-EVM-Id"]),
-         "X-Nonce": String(authHeaders["X-Nonce"]),
-         "X-Signature": authHeaders["X-Signature"],
+         'X-Platform': String(authHeaders['X-Platform']),
+         'X-Chain-EVM-Id': String(authHeaders['X-Chain-EVM-Id']),
+         'X-Nonce': String(authHeaders['X-Nonce']),
+         'X-Signature': authHeaders['X-Signature'],
          ...(requestSpecificHeaders || {}),
       };
 
@@ -146,14 +148,14 @@ export class FetchHttpClient implements IHttpClient {
    async put<T>(
       path: string,
       body: GenericObject<any>,
-      requestSpecificHeaders?: GenericObject<string>
+      requestSpecificHeaders?: GenericObject<string>,
    ): Promise<T> {
       const authHeaders = await this.getAuthHeaders(body);
       const headers: Record<string, string> = {
-         "X-Platform": String(authHeaders["X-Platform"]),
-         "X-Chain-EVM-Id": String(authHeaders["X-Chain-EVM-Id"]),
-         "X-Nonce": String(authHeaders["X-Nonce"]),
-         "X-Signature": authHeaders["X-Signature"],
+         'X-Platform': String(authHeaders['X-Platform']),
+         'X-Chain-EVM-Id': String(authHeaders['X-Chain-EVM-Id']),
+         'X-Nonce': String(authHeaders['X-Nonce']),
+         'X-Signature': authHeaders['X-Signature'],
          ...(requestSpecificHeaders || {}),
       };
 
@@ -171,14 +173,14 @@ export class FetchHttpClient implements IHttpClient {
    async delete<T>(
       path: string,
       body: GenericObject<any> | undefined,
-      requestSpecificHeaders?: GenericObject<string>
+      requestSpecificHeaders?: GenericObject<string>,
    ): Promise<T> {
       const authHeaders = await this.getAuthHeaders(body || {});
       const headers: Record<string, string> = {
-         "X-Platform": String(authHeaders["X-Platform"]),
-         "X-Chain-EVM-Id": String(authHeaders["X-Chain-EVM-Id"]),
-         "X-Nonce": String(authHeaders["X-Nonce"]),
-         "X-Signature": authHeaders["X-Signature"],
+         'X-Platform': String(authHeaders['X-Platform']),
+         'X-Chain-EVM-Id': String(authHeaders['X-Chain-EVM-Id']),
+         'X-Nonce': String(authHeaders['X-Nonce']),
+         'X-Signature': authHeaders['X-Signature'],
          ...(requestSpecificHeaders || {}),
       };
 
@@ -215,4 +217,4 @@ export class FetchHttpClient implements IHttpClient {
    get Environment(): ENVIRONMENT {
       return this.environment;
    }
-} 
+}

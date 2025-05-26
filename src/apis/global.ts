@@ -1,8 +1,8 @@
-import { IHttpClient } from "../IHttpClient"
-import { GlobalChainsResponse, GlobalPairsResponse } from "../types"
+import { IHttpClient } from '../IHttpClient';
+import { GlobalChainsResponse, GlobalPairsResponse } from '../types';
 
 export class Global {
-   constructor(private readonly client: IHttpClient) { }
+   constructor(private readonly client: IHttpClient) {}
    /**
     *
     * @summary Health Check
@@ -10,7 +10,7 @@ export class Global {
     * @returns {Promise<{ msg: string }>} Promise
     */
    async checkHealth(): Promise<boolean> {
-      return this.client.healthCheck()
+      return this.client.healthCheck();
    }
 
    /**
@@ -20,7 +20,7 @@ export class Global {
     * @returns {Promise<GlobalChainsResponse[]>} Promise
     */
    async getChains(): Promise<GlobalChainsResponse[]> {
-      const urlPath = "v1/global/chains";
+      const urlPath = 'v1/global/chains';
       return this.client.get<GlobalChainsResponse[]>(urlPath);
    }
 
@@ -31,7 +31,7 @@ export class Global {
     * @returns {Promise<GlobalPairsResponse[]>} Promise
     */
    async getPairs(): Promise<GlobalPairsResponse[]> {
-      const urlPath = "v1/global/pairs";
+      const urlPath = 'v1/global/pairs';
       return this.client.get<GlobalPairsResponse[]>(urlPath);
    }
 }

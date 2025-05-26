@@ -1,15 +1,15 @@
-import { Account as ViemAccount } from "viem";
-import { CHAINS, PLATFORMS, ENVIRONMENT } from "./types"
-import { generateAgentAccount } from "./utils"
-import { FetchHttpClient } from "./clients/fetch-http-client"
-import { IHttpClient } from "./IHttpClient";
+import { Account as ViemAccount } from 'viem';
+import { CHAINS, PLATFORMS, ENVIRONMENT } from './types';
+import { generateAgentAccount } from './utils';
+import { FetchHttpClient } from './clients/fetch-http-client';
+import { IHttpClient } from './IHttpClient';
 
-import { History } from "./apis/history"
-import { User } from "./apis/user"
-import { Order } from "./apis/order"
-import { Position } from "./apis/position"
-import { Global } from "./apis/global"
-import { Oracle } from "./apis/oracle"
+import { History } from './apis/history';
+import { User } from './apis/user';
+import { Order } from './apis/order';
+import { Position } from './apis/position';
+import { Global } from './apis/global';
+import { Oracle } from './apis/oracle';
 
 export interface LitlayerHttpClientConfig {
    chainId: CHAINS;
@@ -61,7 +61,7 @@ export class LitlayerHttpClient {
       userAccount: ViemAccount,
       baseUrl: string,
       agentAccount?: ViemAccount,
-      customHttpClient?: IHttpClient
+      customHttpClient?: IHttpClient,
    ): Promise<LitlayerHttpClient> {
       const agent = agentAccount ?? generateAgentAccount();
 

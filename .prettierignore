@@ -1,0 +1,4 @@
+# Ignore all YAML files
+*.yaml
+*.yml
+README.md
