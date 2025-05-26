@@ -317,9 +317,9 @@ export function getSlippageAdjustedPrice(price: string, slippage: string, isLong
    let slippageToleranceValue = 1;
 
    if (isLong) {
-      slippageToleranceValue = (1 + Number(slippage)) / 100;
+      slippageToleranceValue = 1 + Number(slippage) / 100;
    } else {
-      slippageToleranceValue = (1 - Number(slippage)) / 100;
+      slippageToleranceValue = 1 - Number(slippage) / 100;
    }
 
    return String(Number(price) * slippageToleranceValue);
