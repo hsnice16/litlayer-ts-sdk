@@ -16,6 +16,7 @@ import {
    AuthenticatedHeaders,
    GenericObject,
    ENVIRONMENT,
+   GlobalPairsResponse,
 } from './types';
 
 import { checkAgent, exchangeAgent } from './apis/agent';
@@ -311,9 +312,9 @@ function generateAgentAccount(): ViemAccount {
  * @param {string} price Market Price
  * @param {string} slippage Slippage
  * @param {boolean} isLong Is Long Position
- * @returns {string} Slippage Adjusted Market Price
+ * @returns {number} Slippage Adjusted Market Price
  */
-export function getSlippageAdjustedPrice(price: string, slippage: string, isLong: boolean): string {
+export function getSlippageAdjustedPrice(price: string, slippage: string, isLong: boolean): number {
    let slippageToleranceValue = 1;
 
    if (isLong) {
@@ -322,5 +323,19 @@ export function getSlippageAdjustedPrice(price: string, slippage: string, isLong
       slippageToleranceValue = 1 - Number(slippage) / 100;
    }
 
-   return String(Number(price) * slippageToleranceValue);
+   return Number(price) * slippageToleranceValue;
+}
+
+/**
+ *
+ * @summary Get Symbol Pair
+ * @param {GlobalPairsResponse[]} pairs Pairs
+ * @param {string} symbol Symbol
+ * @returns {GlobalPairsResponse | undefined} Symbol Pair (if exist)
+ */
+export function getSymbolPair(
+   pairs: GlobalPairsResponse[],
+   symbol: string,
+): GlobalPairsResponse | undefined {
+   return pairs.find((pair) => pair.symbol.toLowerCase() === symbol?.toLowerCase());
 }

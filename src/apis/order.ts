@@ -1,6 +1,7 @@
 import { z } from 'zod/v4';
+import { Global } from './global';
 import { IHttpClient } from '../IHttpClient';
-import { getSlippageAdjustedPrice, validateStringRequiredParameter } from '../utils';
+import { getSlippageAdjustedPrice, getSymbolPair, validateStringRequiredParameter } from '../utils';
 
 import {
    CreateOrderSchema,
@@ -25,10 +26,12 @@ import {
 export class Order {
    private internalHttpClient: IHttpClient;
    private mainAccount: string;
+   private global: Global;
 
    constructor(client: IHttpClient) {
       this.internalHttpClient = client;
       this.mainAccount = client.Account.address!;
+      this.global = new Global(client);
    }
 
    /**
@@ -148,8 +151,17 @@ export class Order {
       clientOrderId?: string,
    ): Promise<MutateOrderResponse> {
       if (type === OrderType.MARKET) {
-         price = getSlippageAdjustedPrice(price, slippage, direction === OrderDirection.LONG);
+         const _price = getSlippageAdjustedPrice(
+            price,
+            slippage,
+            direction === OrderDirection.LONG,
+         );
 
+         const pairs = await this.global.getPairs();
+         const orderPair = getSymbolPair(pairs, symbol);
+         const pairPxDecimal = orderPair?.price_decimal ?? 6;
+
+         price = _price.toFixed(pairPxDecimal);
          slippage = '0';
       }
 
@@ -251,15 +263,25 @@ export class Order {
     * @returns {MutateOrderResponse[]} Promise
     */
    async creates(orders: CreateOrderType[]): Promise<MutateOrderResponse[]> {
+      let pairs = null;
+
       // Format Market Orders `price` and `slippage`
       for (const order of orders) {
          if (order.type === OrderType.MARKET) {
-            order.price = getSlippageAdjustedPrice(
+            const _price = getSlippageAdjustedPrice(
                order.price,
                order.slippage,
                order.direction === OrderDirection.LONG,
             );
 
+            if (!pairs) {
+               pairs = await this.global.getPairs();
+            }
+
+            const orderPair = getSymbolPair(pairs, order.symbol);
+            const pairPxDecimal = orderPair?.price_decimal ?? 6;
+
+            order.price = _price.toFixed(pairPxDecimal);
             order.slippage = '0';
          }
       }

@@ -3,9 +3,17 @@ import { WalletClient } from 'viem';
 import { signWsTypedData } from '../ws-utils';
 import { InvalidParameterError } from '../error';
 import { UserWsClient } from './user-ws-client';
-import { getSlippageAdjustedPrice } from '../utils';
+import { getSlippageAdjustedPrice, getSymbolPair } from '../utils';
 
-import { CHAINS, OrderDirection, OrderType, ENVIRONMENT, PLATFORMS, CreateOrder } from '../types';
+import {
+   CHAINS,
+   OrderDirection,
+   OrderType,
+   ENVIRONMENT,
+   PLATFORMS,
+   CreateOrder,
+   GlobalPairsResponse,
+} from '../types';
 
 import {
    LoginPayloadRequest,
@@ -280,18 +288,22 @@ export class MmWsClient extends UserWsClient {
       this.post(MM_WS_CLIENT_CHANNELS.CANCEL_ORDER, cancelOrderData, requestId);
    }
 
-   createOrders(orders: CreateOrder[], requestId?: string): void {
+   createOrders(orders: CreateOrder[], pairs: GlobalPairsResponse[], requestId?: string): void {
       const createOrdersData: MmWsCreateOrdersRequestData = orders;
 
       // Format Market Orders `price` and `slippage`
       for (const order of createOrdersData) {
          if (order.type === OrderType.MARKET) {
-            order.price = getSlippageAdjustedPrice(
+            const _price = getSlippageAdjustedPrice(
                order.price,
                order.slippage,
                order.direction === OrderDirection.LONG,
             );
 
+            const orderPair = getSymbolPair(pairs, order.symbol);
+            const pairPxDecimal = orderPair?.price_decimal ?? 6;
+
+            order.price = _price.toFixed(pairPxDecimal);
             order.slippage = '0';
          }
       }
