@@ -1,7 +1,6 @@
 import { keccak256, toBytes, Account as ViemAccount } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { WalletClient } from 'viem';
-import BigNumber from 'bignumber.js';
 
 import {
    AGENT_EXPIRE_DURATION,
@@ -315,13 +314,13 @@ function generateAgentAccount(): ViemAccount {
  * @returns {string} Slippage Adjusted Market Price
  */
 export function getSlippageAdjustedPrice(price: string, slippage: string, isLong: boolean): string {
-   let slippageToleranceValue = new BigNumber(1);
+   let slippageToleranceValue = 1;
 
    if (isLong) {
-      slippageToleranceValue = new BigNumber(1).plus(new BigNumber(slippage).dividedBy(100));
+      slippageToleranceValue = (1 + Number(slippage)) / 100;
    } else {
-      slippageToleranceValue = new BigNumber(1).minus(new BigNumber(slippage).dividedBy(100));
+      slippageToleranceValue = (1 - Number(slippage)) / 100;
    }
 
-   return new BigNumber(price).multipliedBy(slippageToleranceValue).toString();
+   return String(Number(price) * slippageToleranceValue);
 }
