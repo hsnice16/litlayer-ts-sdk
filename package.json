@@ -1,10 +1,10 @@
 {
    "name": "@stellaxyz/litlayer-sdk",
-   "version": "1.0.1",
+   "version": "1.0.2",
    "description": "Litlayer TypeScript SDK (Stella Trade)",
-   "main": "./build/cjs/index.js",
+   "main": "./build/index.js",
    "types": "./build/types/index.d.ts",
-   "module": "./build/esm/index.js",
+   "module": "./build/index.js",
    "source": "./src/index.ts",
    "files": [
       "build",
@@ -13,10 +13,9 @@
    "exports": {
       ".": {
          "types": "./build/types/index.d.ts",
-         "require": "./build/cjs/index.js",
-         "import": "./build/esm/index.js",
+         "import": "./build/index.js",
          "source": "./src/index.ts",
-         "default": "./build/esm/index.js"
+         "default": "./build/index.js"
       }
    },
    "keywords": [
@@ -36,7 +35,7 @@
       "docs": "typedoc",
       "test": "vitest run"
    },
-   "author": "Litlayer Team <dev@litlayer.com>",
+   "author": "Litlayer Team <litlayer@stellaxyz.io>",
    "license": "ISC",
    "devDependencies": {
       "@types/node": "^22.15.21",
