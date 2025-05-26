@@ -1,7 +1,7 @@
-import { WalletClient } from "viem";
-import { CHAINS, ENVIRONMENT, PLATFORMS } from "./types"
-import { getSignTypedDomain } from "./utils"
-import { WS_TYPES_AGENT } from "./ws/constants";
+import { WalletClient } from 'viem';
+import { CHAINS, ENVIRONMENT, PLATFORMS } from './types';
+import { getSignTypedDomain } from './utils';
+import { WS_TYPES_AGENT } from './ws/constants';
 
 export { pause, signWsTypedData };
 
@@ -30,7 +30,7 @@ async function signWsTypedData(
    chainId: CHAINS,
    mmAccount: WalletClient,
    expiryTime: number,
-   environment: ENVIRONMENT
+   environment: ENVIRONMENT,
 ): Promise<string> {
    const message = {
       litLayer: environment,
@@ -41,19 +41,22 @@ async function signWsTypedData(
    const viemDomain = {
       name: domainInfo.name === null ? undefined : domainInfo.name,
       version: domainInfo.version === null ? undefined : domainInfo.version,
-      chainId: typeof domainInfo.chainId === 'string'
-         ? parseInt(domainInfo.chainId, 10)
-         : domainInfo.chainId === null ? undefined : domainInfo.chainId,
+      chainId:
+         typeof domainInfo.chainId === 'string'
+            ? parseInt(domainInfo.chainId, 10)
+            : domainInfo.chainId === null
+              ? undefined
+              : domainInfo.chainId,
    };
 
    if (!mmAccount.account) {
-      throw new Error("userWalletClient does not have an account to sign with.");
+      throw new Error('userWalletClient does not have an account to sign with.');
    }
 
    return await mmAccount.signTypedData({
       account: mmAccount.account,
       domain: viemDomain,
-      primaryType: "Authentication",
+      primaryType: 'Authentication',
       types: WS_TYPES_AGENT,
       message,
    });

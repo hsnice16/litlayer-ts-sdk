@@ -1,12 +1,6 @@
-import {
-   validateRequiredParameter,
-   validateStringRequiredParameter,
-} from "../utils"
-import {
-   OracleHistoricalPriceResponse,
-   OraclePriceResponse,
-} from "../types"
-import { IHttpClient } from "../clients/IHttpClient";
+import { validateRequiredParameter, validateStringRequiredParameter } from '../utils';
+import { OracleHistoricalPriceResponse, OraclePriceResponse } from '../types';
+import { IHttpClient } from '../clients/IHttpClient';
 
 export class Oracle {
    private client: IHttpClient;
@@ -24,11 +18,8 @@ export class Oracle {
     * @throws {RequiredError} RequiredError
     * @returns {Promise<OraclePriceResponse>} Promise
     */
-   async getPrice(
-      symbol: string,
-      ts?: number
-   ): Promise<OraclePriceResponse> {
-      validateStringRequiredParameter(symbol, "symbol");
+   async getPrice(symbol: string, ts?: number): Promise<OraclePriceResponse> {
+      validateStringRequiredParameter(symbol, 'symbol');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {};
       if (ts) {
@@ -45,10 +36,7 @@ export class Oracle {
       }
 
       const urlPath = `v1/price/${symbol}`;
-      const response = await this.client.get<OraclePriceResponse>(
-         urlPath,
-         queryParams
-      );
+      const response = await this.client.get<OraclePriceResponse>(urlPath, queryParams);
       this.priceCache.set(symbol, response);
       return response;
    }
@@ -60,11 +48,9 @@ export class Oracle {
     * @throws {RequiredError} RequiredError
     * @returns {Promise<Number>} Promise
     */
-   async getMarkPrice(
-      symbol: string,
-   ): Promise<number> {
+   async getMarkPrice(symbol: string): Promise<number> {
       const priceData = await this.getPrice(symbol);
-      return priceData.latest_price.mark_price
+      return priceData.latest_price.mark_price;
    }
 
    /**
@@ -74,11 +60,9 @@ export class Oracle {
     * @throws {RequiredError} RequiredError
     * @returns {Promise<Number>} Promise
     */
-   async getIndexPrice(
-      symbol: string,
-   ): Promise<Number> {
+   async getIndexPrice(symbol: string): Promise<Number> {
       const priceData = await this.getPrice(symbol);
-      return priceData.latest_price.index_price
+      return priceData.latest_price.index_price;
    }
 
    /**
@@ -99,13 +83,13 @@ export class Oracle {
       fromTimestamp: number,
       toTimestamp: number,
       resolution: string,
-      count?: number
+      count?: number,
    ): Promise<OracleHistoricalPriceResponse> {
-      validateStringRequiredParameter(symbol, "symbol");
-      validateStringRequiredParameter(type, "type");
-      validateRequiredParameter(fromTimestamp, "fromTimestamp");
-      validateRequiredParameter(toTimestamp, "toTimestamp");
-      validateStringRequiredParameter(resolution, "resolution");
+      validateStringRequiredParameter(symbol, 'symbol');
+      validateStringRequiredParameter(type, 'type');
+      validateRequiredParameter(fromTimestamp, 'fromTimestamp');
+      validateRequiredParameter(toTimestamp, 'toTimestamp');
+      validateStringRequiredParameter(resolution, 'resolution');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {
          symbol,
@@ -120,9 +104,6 @@ export class Oracle {
       }
 
       const urlPath = `v1/price/historical/${symbol}`;
-      return this.client.get<OracleHistoricalPriceResponse>(
-         urlPath,
-         queryParams
-      );
+      return this.client.get<OracleHistoricalPriceResponse>(urlPath, queryParams);
    }
 }

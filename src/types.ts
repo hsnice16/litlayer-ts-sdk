@@ -4,12 +4,12 @@ export enum CHAINS {
 }
 
 export enum PLATFORMS {
-   STELLA = "stella",
+   STELLA = 'stella',
 }
 
 export enum ENVIRONMENT {
-   TESTNET = "Testnet",
-   MAINNET = "Mainnet",
+   TESTNET = 'Testnet',
+   MAINNET = 'Mainnet',
 }
 
 export type GenericObject<T> = Record<string, T>;
@@ -19,25 +19,25 @@ export type GenericObject<T> = Record<string, T>;
  */
 
 export enum HTTP_METHODS {
-   GET = "GET",
-   POST = "POST",
-   PUT = "PUT",
-   DELETE = "DELETE",
+   GET = 'GET',
+   POST = 'POST',
+   PUT = 'PUT',
+   DELETE = 'DELETE',
 }
 
 export interface ReadonlyHeaders {
-   "X-Platform": PLATFORMS;
-   "X-Chain-EVM-Id": CHAINS;
+   'X-Platform': PLATFORMS;
+   'X-Chain-EVM-Id': CHAINS;
 }
 
 export interface AuthenticatedHeaders extends ReadonlyHeaders {
-   "X-Nonce": number;
-   "X-Signature": string;
+   'X-Nonce': number;
+   'X-Signature': string;
 }
 
 export type GenericAPIResponse<T> =
-   | { success: true; data: T; ts: number; code: number; }
-   | { success: false; msg: string; code: number; };
+   | { success: true; data: T; ts: number; code: number }
+   | { success: false; msg: string; code: number };
 
 /**
  * Global Types
@@ -66,13 +66,13 @@ export interface GlobalPairsResponse {
  */
 
 export enum HistoryQuerySortDir {
-   ASC = "asc",
-   DESC = "desc",
+   ASC = 'asc',
+   DESC = 'desc',
 }
 
 export enum HistoryQueryDepositsSortBy {
-   AMOUNT = "amount",
-   DEPOSIT_TIME = "deposit_time",
+   AMOUNT = 'amount',
+   DEPOSIT_TIME = 'deposit_time',
 }
 
 export interface HistoryQueryDepositsResponseList {
@@ -85,9 +85,9 @@ export interface HistoryQueryDepositsResponseList {
 }
 
 export enum HistoryQueryFundsSortBy {
-   FEE = "fee",
-   FUND_TIME = "fund_time",
-   RATE = "rate",
+   FEE = 'fee',
+   FUND_TIME = 'fund_time',
+   RATE = 'rate',
 }
 
 export interface HistoryQueryFundsResponseList {
@@ -100,10 +100,10 @@ export interface HistoryQueryFundsResponseList {
 }
 
 export enum HistoryQueryOrdersSortBy {
-   FEE = "fee",
-   ORDER_TIME = "order_time",
-   PNL = "pnl",
-   ENTRY_PRICE = "entry_price",
+   FEE = 'fee',
+   ORDER_TIME = 'order_time',
+   PNL = 'pnl',
+   ENTRY_PRICE = 'entry_price',
 }
 
 export interface HistoryQueryOrdersResponseList {
@@ -119,11 +119,11 @@ export interface HistoryQueryOrdersResponseList {
 }
 
 export enum HistoryQueryTradesSortBy {
-   FEE = "fee",
-   PNL = "pnl",
-   PRICE = "price",
-   QUANTITY = "quantity",
-   TRADE_TIME = "trade_time",
+   FEE = 'fee',
+   PNL = 'pnl',
+   PRICE = 'price',
+   QUANTITY = 'quantity',
+   TRADE_TIME = 'trade_time',
 }
 
 export interface HistoryQueryTradesResponseList {
@@ -138,8 +138,8 @@ export interface HistoryQueryTradesResponseList {
 }
 
 export enum HistoryQueryWithdrawsSortBy {
-   AMOUNT = "amount",
-   WITHDRAW_TIME = "withdraw_time",
+   AMOUNT = 'amount',
+   WITHDRAW_TIME = 'withdraw_time',
 }
 
 export interface HistoryQueryWithdrawsResponseList {
@@ -185,26 +185,26 @@ export interface OracleHistoricalPriceResponse {
  */
 
 export enum OrderQuerySortDir {
-   ASC = "asc",
-   DESC = "desc",
+   ASC = 'asc',
+   DESC = 'desc',
 }
 
 export enum OrderQueryOpenOrdersSortBy {
-   SUBMIT_TIME = "submit_time",
-   PRICE = "price",
-   QUANTITY = "quantity",
+   SUBMIT_TIME = 'submit_time',
+   PRICE = 'price',
+   QUANTITY = 'quantity',
 }
 
 export enum OrderDirection {
-   LONG = "L",
-   SHORT = "S",
+   LONG = 'L',
+   SHORT = 'S',
 }
 
 export enum OrderType {
-   MARKET = "M",
-   LIMIT = "L",
-   TAKE_PROFIT = "T",
-   STOP_LOSS = "S",
+   MARKET = 'M',
+   LIMIT = 'L',
+   TAKE_PROFIT = 'T',
+   STOP_LOSS = 'S',
 }
 
 export interface OrderQueryOpenOrdersResponseList {
@@ -280,15 +280,15 @@ export interface QueryResponse<T> {
 }
 
 export enum PositionQuerySortDir {
-   ASC = "asc",
-   DESC = "desc",
+   ASC = 'asc',
+   DESC = 'desc',
 }
 
 export enum PositionQueryClosedPositionsSortBy {
-   PNL = "pnl",
-   OPEN_TIME = "open_time",
-   FEE = "fee",
-   FUNDING_FEE = "funding_fee",
+   PNL = 'pnl',
+   OPEN_TIME = 'open_time',
+   FEE = 'fee',
+   FUNDING_FEE = 'funding_fee',
 }
 
 /**
@@ -340,7 +340,6 @@ export interface LitlayerTypedDataField {
    name: string;
    type: string;
 }
-
 
 export interface LitlayerTypedDataDomain {
    chainId: null | number | string;

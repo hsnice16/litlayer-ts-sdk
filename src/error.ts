@@ -4,9 +4,12 @@
  * @extends {Error}
  */
 export class InvalidParameterError extends Error {
-   readonly name: string = "RequiredError";
+   readonly name: string = 'RequiredError';
 
-   constructor(public field: string, msg?: string) {
+   constructor(
+      public field: string,
+      msg?: string,
+   ) {
       super(msg || `Field '${field}' is required.`);
    }
 }
@@ -15,7 +18,7 @@ export class InvalidParameterError extends Error {
  * Custom error for HTTP-related issues (e.g., network errors, non-2xx status codes).
  */
 export class HttpError extends Error {
-   readonly name: string = "HttpError";
+   readonly name: string = 'HttpError';
 
    /**
     * @param {number} status The HTTP status code.
@@ -25,7 +28,7 @@ export class HttpError extends Error {
    constructor(
       public status: number,
       message: string,
-      public response?: Response
+      public response?: Response,
    ) {
       super(message);
    }
@@ -35,7 +38,7 @@ export class HttpError extends Error {
  * Custom error for issues reported by the Litlayer API (e.g., success: false responses).
  */
 export class LitlayerApiError extends Error {
-   readonly name: string = "LitlayerApiError";
+   readonly name: string = 'LitlayerApiError';
 
    /**
     * @param {number} code The API-specific error code.
@@ -45,7 +48,7 @@ export class LitlayerApiError extends Error {
    constructor(
       public code: number,
       public apiMessage: string,
-      public responseData?: any
+      public responseData?: any,
    ) {
       super(`API Error Code: ${code} - ${apiMessage}`);
    }

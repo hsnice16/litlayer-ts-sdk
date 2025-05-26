@@ -1,18 +1,19 @@
 {
-  "compilerOptions": {
-    "rootDir": "src" /* Specify the root folder within your source files. */,
-    "target": "ES2020" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
-    "declarationDir": "./build/types", /* Specify the output directory for generated declaration files. */
-    "declarationMap": true /* Generate declaration map files. */,
-    "sourceMap": true /* Generate source map files to help in debugging. Helps in showing original code instead of the compiled. */,
-    "strict": true /* Enable all strict type-checking options. */,
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+   "compilerOptions": {
+      "rootDir": "src" /* Specify the root folder within your source files. */,
+      "target": "ES2020" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+      "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
+      "declarationDir": "./build/types" /* Specify the output directory for generated declaration files. */,
+      "declarationMap": true /* Generate declaration map files. */,
+      "sourceMap": true /* Generate source map files to help in debugging. Helps in showing original code instead of the compiled. */,
+      "strict": true /* Enable all strict type-checking options. */,
+      "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+      "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
 
-    "module": "ES2020" /* Specify what module code is generated. */,
-    "moduleResolution": "bundler" /* Specify how TypeScript looks up a file from a given module specifier. */
-  },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+      "module": "ES2020" /* Specify what module code is generated. */,
+      "moduleResolution": "bundler" /* Specify how TypeScript looks up a file from a given module specifier. */,
+      "outDir": "./build" /* Output directory for compiled JavaScript files */
+   },
+   "include": ["src"],
+   "exclude": ["node_modules"]
 }

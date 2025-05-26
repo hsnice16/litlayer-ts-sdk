@@ -1,5 +1,5 @@
-import { USER_WS_RESPONSE_RESULT } from "./constants"
-import { BaseWsClient } from "./base-ws-client"
+import { USER_WS_RESPONSE_RESULT } from './constants';
+import { BaseWsClient } from './base-ws-client';
 import {
    USER_WS_CLIENT_ADDRESS_CHANNELS,
    USER_WS_CLIENT_SYMBOL_CHANNELS,
@@ -8,12 +8,14 @@ import {
    UserWsResponse,
    UserPureOperationResponse,
    UserSubscriptionPush,
-} from "./types"
+} from './types';
 
 type WsHandlerCallback = (payload: any) => void;
 
 export class UserWsClient extends BaseWsClient<
-   USER_WS_CLIENT_SYMBOL_CHANNELS | USER_WS_CLIENT_ADDRESS_CHANNELS | typeof USER_WS_RESPONSE_RESULT,
+   | USER_WS_CLIENT_SYMBOL_CHANNELS
+   | USER_WS_CLIENT_ADDRESS_CHANNELS
+   | typeof USER_WS_RESPONSE_RESULT,
    UserWsRequest,
    UserWsResponse,
    WsHandlerCallback
@@ -33,7 +35,9 @@ export class UserWsClient extends BaseWsClient<
          [USER_WS_CLIENT_ADDRESS_CHANNELS.MATCHING]: [],
          [USER_WS_RESPONSE_RESULT]: [],
       } as Record<
-         USER_WS_CLIENT_SYMBOL_CHANNELS | USER_WS_CLIENT_ADDRESS_CHANNELS | typeof USER_WS_RESPONSE_RESULT,
+         | USER_WS_CLIENT_SYMBOL_CHANNELS
+         | USER_WS_CLIENT_ADDRESS_CHANNELS
+         | typeof USER_WS_RESPONSE_RESULT,
          WsHandlerCallback[]
       >;
    }
@@ -53,11 +57,7 @@ export class UserWsClient extends BaseWsClient<
     * @param {string} symbol Symbol, send `*` for market channel to subscribe to all the available symbols
     * @param {string} [requestId] Unique Request Id, Optional
     */
-   subscribeSymbol(
-      channel: USER_WS_CLIENT_SYMBOL_CHANNELS,
-      symbol: string,
-      requestId?: string
-   ) {
+   subscribeSymbol(channel: USER_WS_CLIENT_SYMBOL_CHANNELS, symbol: string, requestId?: string) {
       const message: UserWsRequest = {
          id: requestId ?? undefined, // Ensure id is undefined if not provided, matching original optional behavior
          method: PUBLIC_WS_REQUEST_TYPES.SUBSCRIBE,
@@ -77,11 +77,11 @@ export class UserWsClient extends BaseWsClient<
    subscribeAddress(
       channel: USER_WS_CLIENT_ADDRESS_CHANNELS,
       address?: string,
-      requestId?: string
+      requestId?: string,
    ) {
       const effectiveAddress = address || this.userAccountAddress;
       if (!effectiveAddress) {
-         throw new Error("No address provided and no userAccountAddress set.");
+         throw new Error('No address provided and no userAccountAddress set.');
       }
       const message: UserWsRequest = {
          id: requestId ?? undefined,
@@ -99,11 +99,7 @@ export class UserWsClient extends BaseWsClient<
     * @param {string} symbol Symbol, send `*` for market channel to unsubscribe to all the available symbols
     * @param {string} [requestId] Unique Request Id, Optional
     */
-   unsubscribeSymbol(
-      channel: USER_WS_CLIENT_SYMBOL_CHANNELS,
-      symbol: string,
-      requestId?: string
-   ) {
+   unsubscribeSymbol(channel: USER_WS_CLIENT_SYMBOL_CHANNELS, symbol: string, requestId?: string) {
       const message: UserWsRequest = {
          id: requestId ?? undefined,
          method: PUBLIC_WS_REQUEST_TYPES.UNSUBSCRIBE,
@@ -123,11 +119,11 @@ export class UserWsClient extends BaseWsClient<
    unsubscribeAddress(
       channel: USER_WS_CLIENT_ADDRESS_CHANNELS,
       address?: string,
-      requestId?: string
+      requestId?: string,
    ) {
       const effectiveAddress = address || this.userAccountAddress;
       if (!effectiveAddress) {
-         throw new Error("No address provided and no userAccountAddress set.");
+         throw new Error('No address provided and no userAccountAddress set.');
       }
       const message: UserWsRequest = {
          id: requestId ?? undefined,
@@ -140,14 +136,27 @@ export class UserWsClient extends BaseWsClient<
 
    // Type guard for UserPureOperationResponse
    private isUserPureOperationResponse(message: any): message is UserPureOperationResponse {
-      return message && typeof message === 'object' && message.result === USER_WS_RESPONSE_RESULT &&
-         'id' in message && 'success' in message && 'code' in message && 'ts' in message;
+      return (
+         message &&
+         typeof message === 'object' &&
+         message.result === USER_WS_RESPONSE_RESULT &&
+         'id' in message &&
+         'success' in message &&
+         'code' in message &&
+         'ts' in message
+      );
       // data and error are optional in OperationResponse, so not checking them for type guarding
    }
 
    // Type guard for UserSubscriptionPush
    private isSubscriptionPushMessage(message: any): message is UserSubscriptionPush {
-      return (message && typeof message === 'object' && typeof message.channel === 'string' && message.result === undefined && 'data' in message);
+      return (
+         message &&
+         typeof message === 'object' &&
+         typeof message.channel === 'string' &&
+         message.result === undefined &&
+         'data' in message
+      );
    }
 
    // Implement the abstract handleMessage from BaseWsClient
@@ -165,27 +174,37 @@ export class UserWsClient extends BaseWsClient<
 
    protected handleOperationResponse(message: UserPureOperationResponse): void {
       if (!this._handlers.hasOwnProperty(message.result)) {
-         return
+         return;
       }
 
       const callbacks = this._handlers[message.result];
       if (callbacks && callbacks.length > 0) {
          for (const callback of callbacks) {
-            try { callback(message); } catch (e) { console.error("Error in UserWsClient Operation Response handler:", e); }
+            try {
+               callback(message);
+            } catch (e) {
+               console.error('Error in UserWsClient Operation Response handler:', e);
+            }
          }
       }
    }
 
    protected handlePushMessage(message: UserSubscriptionPush): void {
-      const channelKey = message.channel as USER_WS_CLIENT_SYMBOL_CHANNELS | USER_WS_CLIENT_ADDRESS_CHANNELS;
+      const channelKey = message.channel as
+         | USER_WS_CLIENT_SYMBOL_CHANNELS
+         | USER_WS_CLIENT_ADDRESS_CHANNELS;
       if (!this._handlers.hasOwnProperty(channelKey)) {
-         return
+         return;
       }
 
       const callbacks = this._handlers[channelKey];
       if (callbacks && callbacks.length > 0) {
          for (const callback of callbacks) {
-            try { callback(message.data); } catch (e) { console.error("Error in UserWsClient Subscription Push handler:", e); }
+            try {
+               callback(message.data);
+            } catch (e) {
+               console.error('Error in UserWsClient Subscription Push handler:', e);
+            }
          }
       }
    }

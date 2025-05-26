@@ -1,16 +1,12 @@
-
-import { IHttpClient } from "../IHttpClient"
-import {
-
-   validateStringRequiredParameter,
-} from "../utils"
-import { z } from "zod/v4";
+import { IHttpClient } from '../IHttpClient';
+import { validateStringRequiredParameter } from '../utils';
+import { z } from 'zod/v4';
 import {
    CreateOrderSchema,
    CancelOrderSchema,
    CancelOrdersSchema,
    CloseTPSLOrderSchema,
-} from "./schemas/order"
+} from './schemas/order';
 
 import {
    MutateOrderResponse,
@@ -23,7 +19,7 @@ import {
    OrderType,
    GenericObject,
    QueryResponse,
-} from "../types"
+} from '../types';
 
 export class Order {
    private internalHttpClient: IHttpClient;
@@ -52,10 +48,10 @@ export class Order {
       p?: number,
       ps?: number,
       sortBy?: OrderQueryOpenOrdersSortBy,
-      sortDir?: OrderQuerySortDir
+      sortDir?: OrderQuerySortDir,
    ): Promise<QueryResponse<OrderQueryOpenOrdersResponseList>> {
       const userAddress = address ? address : this.mainAccount;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {};
       queryParams.p = p ?? 1;
@@ -64,13 +60,13 @@ export class Order {
       if (sortBy) queryParams.sortBy = sortBy;
 
       const extraHeaders: GenericObject<string> = {};
-      extraHeaders["X-Sub-Account"] = String(subAccount ?? 0);
+      extraHeaders['X-Sub-Account'] = String(subAccount ?? 0);
 
       const urlPath = `v1/order/${userAddress}`;
       return this.internalHttpClient.get<QueryResponse<OrderQueryOpenOrdersResponseList>>(
          urlPath,
          queryParams,
-         extraHeaders
+         extraHeaders,
       );
    }
 
@@ -82,10 +78,7 @@ export class Order {
     * @throws {InvalidParameterError} RequiredError
     * @returns {MutateOrderResponse} Promise
     */
-   async cancel(
-      orderNo?: string,
-      clientOrderId?: string
-   ): Promise<MutateOrderResponse> {
+   async cancel(orderNo?: string, clientOrderId?: string): Promise<MutateOrderResponse> {
       const payloadToValidate = {
          order_no: orderNo,
          client_order_id: clientOrderId,
@@ -93,16 +86,14 @@ export class Order {
 
       const validatedPayload = CancelOrderSchema.parse(payloadToValidate);
 
-      const urlPath = "v1/order/cancel";
+      const urlPath = 'v1/order/cancel';
       // Construct payload only with properties that are actually present
       const payload: GenericObject<any> = {};
       if (validatedPayload.order_no) payload.order_no = validatedPayload.order_no;
-      if (validatedPayload.client_order_id) payload.client_order_id = validatedPayload.client_order_id;
+      if (validatedPayload.client_order_id)
+         payload.client_order_id = validatedPayload.client_order_id;
 
-      return this.internalHttpClient.post<MutateOrderResponse>(
-         urlPath,
-         payload
-      );
+      return this.internalHttpClient.post<MutateOrderResponse>(urlPath, payload);
    }
 
    /**
@@ -113,25 +104,20 @@ export class Order {
     * @throws {InvalidParameterError} RequiredError
     * @returns {MutateOrderResponse[]} Promise
     */
-   async cancels(
-      orderNos?: string[],
-      clientOrderIds?: string[]
-   ): Promise<MutateOrderResponse[]> {
+   async cancels(orderNos?: string[], clientOrderIds?: string[]): Promise<MutateOrderResponse[]> {
       const payloadToValidate = {
          order_nos: orderNos,
          client_order_ids: clientOrderIds,
       };
       const validatedPayload = CancelOrdersSchema.parse(payloadToValidate);
 
-      const urlPath = "v1/orders/cancel";
+      const urlPath = 'v1/orders/cancel';
       const payload: GenericObject<any> = {};
       if (validatedPayload.order_nos) payload.order_no = validatedPayload.order_nos; // API expects order_no (singular) for array
-      if (validatedPayload.client_order_ids) payload.client_order_id = validatedPayload.client_order_ids; // API expects client_order_id (singular) for array
+      if (validatedPayload.client_order_ids)
+         payload.client_order_id = validatedPayload.client_order_ids; // API expects client_order_id (singular) for array
 
-      return this.internalHttpClient.post<MutateOrderResponse[]>(
-         urlPath,
-         payload
-      );
+      return this.internalHttpClient.post<MutateOrderResponse[]>(urlPath, payload);
    }
 
    /**
@@ -160,7 +146,7 @@ export class Order {
       symbol: string,
       type: OrderType,
       mmUuid?: string,
-      clientOrderId?: string
+      clientOrderId?: string,
    ): Promise<MutateOrderResponse> {
       const payloadToValidate: CreateOrderType = {
          direction,
@@ -176,11 +162,8 @@ export class Order {
 
       const validatedPayload = CreateOrderSchema.parse(payloadToValidate);
 
-      const urlPath = "v1/order/create";
-      return this.internalHttpClient.post<MutateOrderResponse>(
-         urlPath,
-         validatedPayload
-      );
+      const urlPath = 'v1/order/create';
+      return this.internalHttpClient.post<MutateOrderResponse>(urlPath, validatedPayload);
    }
 
    /**
@@ -204,7 +187,7 @@ export class Order {
       price: string,
       quantity: string,
       symbol: string,
-      clientOrderId?: string
+      clientOrderId?: string,
    ): Promise<MutateOrderResponse> {
       return this.create(
          direction,
@@ -212,10 +195,10 @@ export class Order {
          leverage,
          price,
          quantity,
-         "0",
+         '0',
          symbol,
          OrderType.LIMIT,
-         clientOrderId
+         clientOrderId,
       );
    }
 
@@ -242,7 +225,7 @@ export class Order {
       quantity: string,
       slippage: string,
       symbol: string,
-      clientOrderId?: string
+      clientOrderId?: string,
    ): Promise<MutateOrderResponse> {
       return this.create(
          direction,
@@ -253,7 +236,7 @@ export class Order {
          slippage,
          symbol,
          OrderType.MARKET,
-         clientOrderId
+         clientOrderId,
       );
    }
 
@@ -264,17 +247,14 @@ export class Order {
     * @throws {InvalidParameterError} RequiredError
     * @returns {MutateOrderResponse[]} Promise
     */
-   async creates(
-      orders: CreateOrderType[]
-   ): Promise<MutateOrderResponse[]> {
-      const OrdersArraySchema = z.array(CreateOrderSchema).min(1, { message: "Orders array cannot be empty." });
+   async creates(orders: CreateOrderType[]): Promise<MutateOrderResponse[]> {
+      const OrdersArraySchema = z
+         .array(CreateOrderSchema)
+         .min(1, { message: 'Orders array cannot be empty.' });
       const validatedOrders = OrdersArraySchema.parse(orders);
 
-      const urlPath = "v1/orders/create";
-      return this.internalHttpClient.post<MutateOrderResponse[]>(
-         urlPath,
-         validatedOrders
-      );
+      const urlPath = 'v1/orders/create';
+      return this.internalHttpClient.post<MutateOrderResponse[]>(urlPath, validatedOrders);
    }
 
    /**
@@ -286,11 +266,7 @@ export class Order {
     * @throws {InvalidParameterError} RequiredError
     * @returns {string} Promise
     */
-   async closeTPSL(
-      positionNo: string,
-      slPrice?: string,
-      tpPrice?: string
-   ): Promise<string> {
+   async closeTPSL(positionNo: string, slPrice?: string, tpPrice?: string): Promise<string> {
       const payloadToValidate = {
          position_no: positionNo,
          sl_price: slPrice,
@@ -298,16 +274,13 @@ export class Order {
       };
       const validatedPayload = CloseTPSLOrderSchema.parse(payloadToValidate);
 
-      const urlPath = "v1/order/tpslclose";
+      const urlPath = 'v1/order/tpslclose';
       const payload: CloseTPSLOrderPayload = {
          position_no: validatedPayload.position_no,
       };
       if (validatedPayload.sl_price) payload.sl_price = validatedPayload.sl_price;
       if (validatedPayload.tp_price) payload.tp_price = validatedPayload.tp_price;
 
-      return this.internalHttpClient.post<string>(
-         urlPath,
-         payload
-      );
+      return this.internalHttpClient.post<string>(urlPath, payload);
    }
 }

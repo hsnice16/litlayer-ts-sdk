@@ -1,9 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Import UserWsClient and any necessary mocks or dependencies
 import { UserWsClient } from '../../src/ws/user-ws-client';
-import { PUBLIC_WS_REQUEST_TYPES, USER_WS_CLIENT_SYMBOL_CHANNELS, USER_WS_CLIENT_ADDRESS_CHANNELS } from '../../src/ws/types';
+import {
+   PUBLIC_WS_REQUEST_TYPES,
+   USER_WS_CLIENT_SYMBOL_CHANNELS,
+   USER_WS_CLIENT_ADDRESS_CHANNELS,
+} from '../../src/ws/types';
 import { USER_WS_RESPONSE_RESULT } from '../../src/ws/constants';
-
 
 describe('UserWsClient', () => {
    let client: UserWsClient;
@@ -150,4 +153,4 @@ describe('UserWsClient', () => {
    it('should throw if unsubscribeAddress called without address', () => {
       expect(() => client.unsubscribeAddress(USER_WS_CLIENT_ADDRESS_CHANNELS.ORDER)).toThrow();
    });
-}); 
+});

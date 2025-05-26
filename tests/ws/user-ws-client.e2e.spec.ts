@@ -10,7 +10,7 @@ describe('UserWsClient E2E', () => {
 
    beforeAll(async () => {
       // Use a hardcoded WS URL for this test
-      const WS_URL = "wss://testnet.v2.stellaxyz.io/v1/ws";
+      const WS_URL = 'wss://testnet.v2.stellaxyz.io/v1/ws';
       client = new UserWsClient(WS_URL);
 
       // Patch handleMessage to log and check every message
@@ -47,7 +47,10 @@ describe('UserWsClient E2E', () => {
 
       // Wait for operation response
       await new Promise<void>((resolve, reject) => {
-         const timeout = setTimeout(() => reject(new Error('Timeout waiting for opResponse')), 10000);
+         const timeout = setTimeout(
+            () => reject(new Error('Timeout waiting for opResponse')),
+            10000,
+         );
          const check = () => {
             if (opResponse) {
                clearTimeout(timeout);
@@ -68,7 +71,10 @@ describe('UserWsClient E2E', () => {
 
       // Wait for at least one push message
       await new Promise<void>((resolve, reject) => {
-         const timeout = setTimeout(() => reject(new Error('Timeout waiting for pushMessage')), 15000);
+         const timeout = setTimeout(
+            () => reject(new Error('Timeout waiting for pushMessage')),
+            15000,
+         );
          const check = () => {
             if (pushMessage) {
                clearTimeout(timeout);
@@ -86,4 +92,4 @@ describe('UserWsClient E2E', () => {
          check();
       });
    }, 30000);
-}); 
+});

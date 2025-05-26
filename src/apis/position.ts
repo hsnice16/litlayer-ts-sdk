@@ -1,9 +1,5 @@
-
-import { IHttpClient } from "../IHttpClient"
-import {
-
-   validateStringRequiredParameter,
-} from "../utils"
+import { IHttpClient } from '../IHttpClient';
+import { validateStringRequiredParameter } from '../utils';
 
 import {
    PositionQueryClosedPositionsSortBy,
@@ -11,8 +7,8 @@ import {
    GenericObject,
    PositionData,
    QueryResponse,
-} from "../types"
-import { CloseOrderSchema } from "./schemas/order"
+} from '../types';
+import { CloseOrderSchema } from './schemas/order';
 
 export class Position {
    private client: IHttpClient;
@@ -32,19 +28,15 @@ export class Position {
     */
    async queryOpenPositions(
       address?: string,
-      subAccount?: number
+      subAccount?: number,
    ): Promise<QueryResponse<PositionData>> {
       const userAddress = address ? address : this.mainAccount;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
 
       const urlPath = `v1/position/${userAddress}`;
       const extraHeaders: GenericObject<string> = {};
-      extraHeaders["X-Sub-Account"] = String(subAccount ?? 0);
-      return this.client.get<QueryResponse<PositionData>>(
-         urlPath,
-         undefined,
-         extraHeaders
-      );
+      extraHeaders['X-Sub-Account'] = String(subAccount ?? 0);
+      return this.client.get<QueryResponse<PositionData>>(urlPath, undefined, extraHeaders);
    }
 
    /**
@@ -55,20 +47,14 @@ export class Position {
     * @throws {InvalidParameterError} RequiredError
     * @returns {string} Promise<OrderId>
     */
-   async close(
-      closeQuantity: string,
-      positionNo: string
-   ): Promise<string> {
+   async close(closeQuantity: string, positionNo: string): Promise<string> {
       const payloadToValidate = {
          close_quantity: closeQuantity,
          position_no: positionNo,
       };
       const payload = CloseOrderSchema.parse(payloadToValidate);
-      const urlPath = "v1/order/close";
-      return this.client.post<string>(
-         urlPath,
-         payload
-      );
+      const urlPath = 'v1/order/close';
+      return this.client.post<string>(urlPath, payload);
    }
 
    /**
@@ -95,10 +81,10 @@ export class Position {
       p?: number,
       ps?: number,
       sortBy?: PositionQueryClosedPositionsSortBy,
-      sortDir?: PositionQuerySortDir
+      sortDir?: PositionQuerySortDir,
    ): Promise<QueryResponse<PositionData>> {
       const userAddress = address ? address : this.mainAccount;
-      validateStringRequiredParameter(userAddress, "userAddress");
+      validateStringRequiredParameter(userAddress, 'userAddress');
 
       const queryParams: Record<string, string | number | boolean | undefined> = {};
       queryParams.p = p ?? 1;
@@ -111,14 +97,14 @@ export class Position {
       if (toDate) queryParams.toDate = toDate;
 
       const extraHeaders: GenericObject<string | number> = {};
-      extraHeaders["X-Sub-Account"] = subAccount ?? 0;
+      extraHeaders['X-Sub-Account'] = subAccount ?? 0;
 
       const urlPath = `v1/position/close/${userAddress}`;
 
       return this.client.get<QueryResponse<PositionData>>(
          urlPath,
          queryParams,
-         extraHeaders as GenericObject<string>
+         extraHeaders as GenericObject<string>,
       );
    }
 }

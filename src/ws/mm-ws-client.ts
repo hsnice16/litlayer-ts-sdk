@@ -1,16 +1,9 @@
-import { signWsTypedData } from "../ws-utils";
-import { InvalidParameterError } from "../error";
-import { WalletClient } from "viem";
-import { UserWsClient } from "./user-ws-client";
+import { signWsTypedData } from '../ws-utils';
+import { InvalidParameterError } from '../error';
+import { WalletClient } from 'viem';
+import { UserWsClient } from './user-ws-client';
 
-import {
-   CHAINS,
-   OrderDirection,
-   OrderType,
-   ENVIRONMENT,
-   PLATFORMS,
-   CreateOrder,
-} from "../types";
+import { CHAINS, OrderDirection, OrderType, ENVIRONMENT, PLATFORMS, CreateOrder } from '../types';
 
 import {
    LoginPayloadRequest,
@@ -24,20 +17,20 @@ import {
    MmWsCancelOrdersRequestData,
    UserWsRequest,
    MmSpecificChannels,
-   MM_WS_CLIENT_CHANNELS
-} from "./types";
+   MM_WS_CLIENT_CHANNELS,
+} from './types';
 
-import {
-   MM_WS_LOGIN_RESPONSE_RESULT,
-   MM_WS_POST_RESPONSE_RESULT,
-} from "./constants";
+import { MM_WS_LOGIN_RESPONSE_RESULT, MM_WS_POST_RESPONSE_RESULT } from './constants';
 
 // Changed MmWsHandlerCallback to accept a generic payload
 // Specific handlers will need to cast/know what payload to expect based on the event they handle.
 type MmWsHandlerCallback = (payload: any) => void;
 
 // Define a union of MM-specific channel/result keys for handler typing
-type MmClientHandlerKeys = MmSpecificChannels | typeof MM_WS_LOGIN_RESPONSE_RESULT | typeof MM_WS_POST_RESPONSE_RESULT;
+type MmClientHandlerKeys =
+   | MmSpecificChannels
+   | typeof MM_WS_LOGIN_RESPONSE_RESULT
+   | typeof MM_WS_POST_RESPONSE_RESULT;
 
 // Helper constants for type guards, defined at module level for clarity and efficiency
 const mmSpecificChannelValues = Object.values(MM_WS_CLIENT_CHANNELS);
@@ -55,7 +48,7 @@ export class MmWsClient extends UserWsClient {
       platform: PLATFORMS,
       walletClient: WalletClient,
       environment: ENVIRONMENT,
-      wsUrl: string
+      wsUrl: string,
    ) {
       super(wsUrl);
       this._chainId = chainId;
@@ -64,7 +57,10 @@ export class MmWsClient extends UserWsClient {
       this._environment = environment;
       this._wsUrl = wsUrl;
 
-      const initialMmHandlers: Record<MmClientHandlerKeys, MmWsHandlerCallback[]> = {} as Record<MmClientHandlerKeys, MmWsHandlerCallback[]>;
+      const initialMmHandlers: Record<MmClientHandlerKeys, MmWsHandlerCallback[]> = {} as Record<
+         MmClientHandlerKeys,
+         MmWsHandlerCallback[]
+      >;
       for (const channel of mmSpecificChannelValues) {
          initialMmHandlers[channel as MmSpecificChannels] = [];
       }
@@ -73,15 +69,22 @@ export class MmWsClient extends UserWsClient {
       this._mmHandlers = initialMmHandlers;
    }
 
-   get chainId(): CHAINS { return this._chainId; }
-   get platform(): PLATFORMS { return this._platform; }
-   get walletClient(): WalletClient { return this._walletClient; }
+   get chainId(): CHAINS {
+      return this._chainId;
+   }
+   get platform(): PLATFORMS {
+      return this._platform;
+   }
+   get walletClient(): WalletClient {
+      return this._walletClient;
+   }
 
    protected override async onOpen(): Promise<void> {
       try {
          await this.login();
       } catch (error) {
-         const err = error instanceof Error ? error : new Error("MM WebSocket login failed during onOpen");
+         const err =
+            error instanceof Error ? error : new Error('MM WebSocket login failed during onOpen');
          console.error(err.message, error);
          this.onError(err);
          this.disconnect();
@@ -95,11 +98,11 @@ export class MmWsClient extends UserWsClient {
          this._chainId,
          this._walletClient,
          timestamp,
-         this._environment
+         this._environment,
       );
       const loginRequest: LoginPayloadRequest = {
          id: `login-${Date.now()}`,
-         method: "login",
+         method: 'login',
          authentication: {
             platform: this._platform,
             chain_id: this._chainId,
@@ -133,7 +136,7 @@ export class MmWsClient extends UserWsClient {
             try {
                callback(dataForCallback);
             } catch (e) {
-               console.error("Error in MmWs MM Operation handler:", e);
+               console.error('Error in MmWs MM Operation handler:', e);
             }
          }
       }
@@ -141,14 +144,18 @@ export class MmWsClient extends UserWsClient {
    protected handleMmSubscriptionPush(message: MmSubscriptionPush): void {
       const channelKey = message.channel;
       if (!this._mmHandlers.hasOwnProperty(channelKey)) {
-         return
+         return;
       }
 
       // Cast channelKey to MmSpecificChannels after hasOwnProperty check for type safety
       const callbacks = this._mmHandlers[channelKey as MmSpecificChannels];
       if (callbacks && callbacks.length > 0) {
          for (const callback of callbacks) {
-            try { callback(message.data); } catch (e) { console.error("Error in MmWs MM Subscription handler:", e); }
+            try {
+               callback(message.data);
+            } catch (e) {
+               console.error('Error in MmWs MM Subscription handler:', e);
+            }
          }
       }
    }
@@ -157,12 +164,23 @@ export class MmWsClient extends UserWsClient {
    private isMmOperationResponse(m: any): m is MmPureOperationResponse {
       if (!m || typeof m !== 'object') return false;
       // Check if 'result' exists and is one of the MM-specific operation results
-      return typeof m.result === 'string' && (m.result === MM_WS_LOGIN_RESPONSE_RESULT || m.result === MM_WS_POST_RESPONSE_RESULT);
+      return (
+         typeof m.result === 'string' &&
+         (m.result === MM_WS_LOGIN_RESPONSE_RESULT || m.result === MM_WS_POST_RESPONSE_RESULT)
+      );
    }
 
    // Type guard for MM Subscription Pushes
    private isMmSubscriptionPush(m: any): m is MmSubscriptionPush {
-      if (!(m && typeof m === 'object' && typeof m.channel === 'string' && m.result === undefined && 'data' in m)) {
+      if (
+         !(
+            m &&
+            typeof m === 'object' &&
+            typeof m.channel === 'string' &&
+            m.result === undefined &&
+            'data' in m
+         )
+      ) {
          return false;
       }
       // Removed the explicit check against mmSpecificChannelValues
@@ -170,34 +188,28 @@ export class MmWsClient extends UserWsClient {
       return true;
    }
 
-   addMmHandler(
-      handlerFor: MmClientHandlerKeys,
-      callback: MmWsHandlerCallback
-   ): void {
+   addMmHandler(handlerFor: MmClientHandlerKeys, callback: MmWsHandlerCallback): void {
       if (!this._mmHandlers[handlerFor]) {
          this._mmHandlers[handlerFor] = [];
       }
       this._mmHandlers[handlerFor]!.push(callback);
    }
 
-   removeMmHandler(
-      handlerFor: MmClientHandlerKeys,
-      callbackToRemove: MmWsHandlerCallback
-   ): void {
+   removeMmHandler(handlerFor: MmClientHandlerKeys, callbackToRemove: MmWsHandlerCallback): void {
       const callbacks = this._mmHandlers[handlerFor];
       if (callbacks) {
-         this._mmHandlers[handlerFor] = callbacks.filter(cb => cb !== callbackToRemove);
+         this._mmHandlers[handlerFor] = callbacks.filter((cb) => cb !== callbackToRemove);
       }
    }
 
    private post(
-      channel: PostPayloadRequest["request"]["channel"],
-      data: PostPayloadRequest["request"]["data"],
-      requestId?: string
+      channel: PostPayloadRequest['request']['channel'],
+      data: PostPayloadRequest['request']['data'],
+      requestId?: string,
    ): void {
       const postRequest: PostPayloadRequest = {
          id: requestId ?? `post-${Date.now()}`,
-         method: "post",
+         method: 'post',
          request: {
             channel,
             data,
@@ -214,11 +226,17 @@ export class MmWsClient extends UserWsClient {
       leverage: number,
       expiryTime: number,
       clientOrderId?: string,
-      requestId?: string
+      requestId?: string,
    ): void {
       const limitOrderData: MmWsLimitOrderRequestData = {
-         symbol, direction, type: OrderType.LIMIT, price, quantity,
-         slippage: "0", leverage, expiry_time: expiryTime,
+         symbol,
+         direction,
+         type: OrderType.LIMIT,
+         price,
+         quantity,
+         slippage: '0',
+         leverage,
+         expiry_time: expiryTime,
          ...(clientOrderId && { client_order_id: clientOrderId }),
       };
       this.post(MM_WS_CLIENT_CHANNELS.LIMIT_ORDER, limitOrderData, requestId);
@@ -232,10 +250,14 @@ export class MmWsClient extends UserWsClient {
       quantity: string,
       userOrderHash: string,
       clientOrderId?: string,
-      requestId?: string
+      requestId?: string,
    ): void {
       const answerJitData: MmWsJitAnswerRequestData = {
-         symbol, direction, expiry_time_ms: expiryTimeMs, price, quantity,
+         symbol,
+         direction,
+         expiry_time_ms: expiryTimeMs,
+         price,
+         quantity,
          user_order_hash: userOrderHash,
          ...(clientOrderId && { client_order_id: clientOrderId }),
       };
@@ -244,7 +266,10 @@ export class MmWsClient extends UserWsClient {
 
    cancelOrder(orderNo?: string, clientOrderId?: string, requestId?: string): void {
       if (!orderNo && !clientOrderId) {
-         throw new InvalidParameterError("orderNo or clientOrderId", "Either orderNo or clientOrderId must be present");
+         throw new InvalidParameterError(
+            'orderNo or clientOrderId',
+            'Either orderNo or clientOrderId must be present',
+         );
       }
       const cancelOrderData: MmWsCancelOrderRequestData = {
          ...(orderNo && { order_no: orderNo }),
@@ -258,17 +283,17 @@ export class MmWsClient extends UserWsClient {
       this.post(MM_WS_CLIENT_CHANNELS.CREATE_ORDERS, createOrdersData, requestId);
    }
 
-   cancelOrders(
-      orderNos?: string[],
-      clientOrderIds?: string[],
-      requestId?: string
-   ): void {
-      if ((!orderNos || orderNos.length === 0) && (!clientOrderIds || clientOrderIds.length === 0)) {
-         throw new InvalidParameterError("orderNos or clientOrderIds", "Must be non-empty");
+   cancelOrders(orderNos?: string[], clientOrderIds?: string[], requestId?: string): void {
+      if (
+         (!orderNos || orderNos.length === 0) &&
+         (!clientOrderIds || clientOrderIds.length === 0)
+      ) {
+         throw new InvalidParameterError('orderNos or clientOrderIds', 'Must be non-empty');
       }
       const cancelOrdersData: MmWsCancelOrdersRequestData = {};
       if (orderNos && orderNos.length > 0) cancelOrdersData.order_no = orderNos;
-      if (clientOrderIds && clientOrderIds.length > 0) cancelOrdersData.client_order_id = clientOrderIds;
+      if (clientOrderIds && clientOrderIds.length > 0)
+         cancelOrdersData.client_order_id = clientOrderIds;
       this.post(MM_WS_CLIENT_CHANNELS.CANCEL_ORDERS, cancelOrdersData, requestId);
    }
-} 
+}
