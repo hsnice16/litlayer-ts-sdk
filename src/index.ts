@@ -7,6 +7,7 @@ export * from './apis/user';
 
 export * from './ws/mm-ws-client';
 export * from './ws/user-ws-client';
+export * from './ws/types';
 
 /**
  * Unauthenticated APIs

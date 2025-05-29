@@ -1,0 +1,25 @@
+{
+   "name": "example",
+   "version": "1.0.0",
+   "description": "",
+   "module": "index.ts",
+   "type": "module",
+   "keywords": [],
+   "author": "",
+   "license": "ISC",
+   "scripts": {
+      "start:http": "yarn tsx litlayer-http-client.ts",
+      "start:ws": "yarn tsx litlayer-ws-client.ts"
+   },
+   "dependencies": {
+      "@stellaxyz/litlayer-sdk": "^1.0.3",
+      "@types/ws": "^8.5.13",
+      "axios": "^1.9.0",
+      "dotenv": "^16.5.0",
+      "ts-node": "^10.9.2",
+      "tsx": "^4.19.4",
+      "typescript": "^5.8.3",
+      "ws": "^8.18.0",
+      "zod": "^3.25.34"
+   }
+}
